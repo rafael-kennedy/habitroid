@@ -1,0 +1,26 @@
+.retro-icon {
+    display: inline-block;
+    vertical-align: middle;
+    transition: all var(--transition-fast);
+}
+
+.retro-icon--glow {
+    filter: drop-shadow(0 0 2px currentColor);
+}
+
+/* Specific adjustments for stroked icons */
+.retro-icon path[fill="none"],
+.retro-icon polyline[fill="none"],
+.retro-icon line,
+.retro-icon circle[fill="none"],
+.retro-icon rect[fill="none"] {
+    stroke: currentColor;
+    fill: none;
+}
+
+.retro-icon path:not([fill="none"]),
+.retro-icon circle:not([fill="none"]),
+.retro-icon rect:not([fill="none"]) {
+    fill: currentColor;
+    stroke: none;
+}

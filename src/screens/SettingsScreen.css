@@ -1,0 +1,33 @@
+.settings-section {
+    margin-bottom: var(--space-lg);
+}
+
+.settings-section__title {
+    font-size: 10px;
+    color: var(--retro-cyan);
+    margin-bottom: var(--space-sm);
+}
+
+.settings-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    line-height: 1.4;
+}
+
+.settings-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.import-status {
+    font-size: 12px;
+    margin-top: var(--space-sm);
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}

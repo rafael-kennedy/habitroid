@@ -1,0 +1,565 @@
+/* ============================================
+   HABITROID — Design System
+   Retro Commander Keen UI + Neon Vector Game
+   ============================================ */
+
+/* ---- CSS Custom Properties (Design Tokens) ---- */
+:root {
+  /* Retro Background & Surface palette */
+  --bg-deep: #0a0a1a;
+  --bg-primary: #0f1029;
+  --bg-surface: #161838;
+  --bg-elevated: #1e2150;
+  --bg-panel: #12143a;
+
+  /* Retro accent colors (Commander Keen–inspired) */
+  --retro-blue: #4a90d9;
+  --retro-cyan: #00e5ff;
+  --retro-magenta: #ff00ff;
+  --retro-green: #39ff14;
+  --retro-yellow: #ffe600;
+  --retro-red: #ff3c3c;
+  --retro-orange: #ff8c00;
+  --retro-purple: #b388ff;
+
+  /* Neon glow colors (for game) */
+  --neon-cyan: #00ffff;
+  --neon-green: #39ff14;
+  --neon-pink: #ff2d95;
+  --neon-orange: #ff6b35;
+  --neon-purple: #bf5af2;
+  --neon-yellow: #ffea00;
+  --neon-red: #ff3b30;
+  --neon-blue: #5ac8fa;
+
+  /* Text */
+  --text-primary: #e8e8f0;
+  --text-secondary: #9a9ac0;
+  --text-muted: #5a5a80;
+  --text-accent: var(--retro-cyan);
+
+  /* Coin */
+  --coin-gold: #ffd700;
+  --coin-glow: #ffea0088;
+
+  /* Rarity colors */
+  --rarity-common: #a0a0b8;
+  --rarity-uncommon: #39ff14;
+  --rarity-rare: #5ac8fa;
+  --rarity-legendary: #ff9f0a;
+
+  /* Borders */
+  --border-color: #2a2a60;
+  --border-glow: var(--retro-cyan);
+
+  /* Typography */
+  --font-retro: 'Press Start 2P', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Nav */
+  --nav-height: 64px;
+}
+
+/* ---- Reset & Base ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Scanline overlay for retro feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.06) 2px,
+      rgba(0, 0, 0, 0.06) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+/* ---- Typography Utilities ---- */
+.font-retro {
+  font-family: var(--font-retro);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-accent {
+  color: var(--text-accent);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* ---- Retro Panel Component ---- */
+.retro-panel {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--retro-cyan), transparent);
+  opacity: 0.6;
+}
+
+.retro-panel--elevated {
+  background: var(--bg-elevated);
+  border-color: var(--retro-blue);
+  box-shadow:
+    0 0 15px rgba(74, 144, 217, 0.15),
+    inset 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Retro Button ---- */
+.retro-btn {
+  font-family: var(--font-retro);
+  font-size: 10px;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--retro-cyan);
+  background: var(--bg-panel);
+  color: var(--retro-cyan);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-btn:hover {
+  background: var(--retro-cyan);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+}
+
+.retro-btn:active {
+  transform: scale(0.96);
+}
+
+.retro-btn--primary {
+  border-color: var(--retro-green);
+  color: var(--retro-green);
+}
+
+.retro-btn--primary:hover {
+  background: var(--retro-green);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+}
+
+.retro-btn--danger {
+  border-color: var(--retro-red);
+  color: var(--retro-red);
+}
+
+.retro-btn--danger:hover {
+  background: var(--retro-red);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px rgba(255, 60, 60, 0.4);
+}
+
+.retro-btn--gold {
+  border-color: var(--coin-gold);
+  color: var(--coin-gold);
+}
+
+.retro-btn--gold:hover {
+  background: var(--coin-gold);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px var(--coin-glow);
+}
+
+/* ---- Retro Input ---- */
+.retro-input {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-deep);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast);
+}
+
+.retro-input:focus {
+  border-color: var(--retro-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.retro-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ---- Screen Layout ---- */
+.screen {
+  flex: 1;
+  padding: var(--space-md);
+  padding-bottom: calc(var(--nav-height) + var(--space-md) + var(--safe-bottom));
+  overflow-y: auto;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.screen-title {
+  font-family: var(--font-retro);
+  font-size: 14px;
+  color: var(--text-accent);
+  margin-bottom: var(--space-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ---- Coin Display ---- */
+.coin-display {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-retro);
+  font-size: 12px;
+  color: var(--coin-gold);
+  text-shadow: 0 0 8px var(--coin-glow);
+}
+
+.coin-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff7a8, var(--coin-gold), #b8860b);
+  box-shadow: 0 0 8px var(--coin-glow);
+  display: inline-block;
+}
+
+/* ---- Rarity Badge ---- */
+.rarity-badge {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rarity-badge--common {
+  color: var(--rarity-common);
+  border: 1px solid var(--rarity-common);
+}
+
+.rarity-badge--uncommon {
+  color: var(--rarity-uncommon);
+  border: 1px solid var(--rarity-uncommon);
+  text-shadow: 0 0 6px var(--rarity-uncommon);
+}
+
+.rarity-badge--rare {
+  color: var(--rarity-rare);
+  border: 1px solid var(--rarity-rare);
+  text-shadow: 0 0 6px var(--rarity-rare);
+}
+
+.rarity-badge--legendary {
+  color: var(--rarity-legendary);
+  border: 1px solid var(--rarity-legendary);
+  text-shadow: 0 0 8px var(--rarity-legendary);
+  animation: legendary-pulse 2s ease-in-out infinite;
+}
+
+@keyframes legendary-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ---- Neon Glow Utilities ---- */
+.glow-cyan {
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.3);
+}
+
+.glow-pink {
+  box-shadow: 0 0 12px rgba(255, 45, 149, 0.3);
+}
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes coinPop {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.3) rotate(180deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes neonFlicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  93% {
+    opacity: 0.8;
+  }
+
+  94% {
+    opacity: 1;
+  }
+
+  96% {
+    opacity: 0.9;
+  }
+
+  97% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) ease forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-slow) ease forwards;
+}
+
+/* ---- Progress Bar ---- */
+.progress-bar {
+  height: 8px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--retro-cyan), var(--retro-green));
+  border-radius: 3px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+/* ---- Modal Overlay ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-md);
+  animation: fadeIn 200ms ease;
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  border: 2px solid var(--retro-cyan);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+}
+
+/* ---- Empty State ---- */
+.empty-state {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--text-muted);
+}
+
+.empty-state__icon {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+.empty-state__text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+/* ---- App Header ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  padding-top: calc(var(--safe-top) + var(--space-sm));
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.app-logo {
+  font-size: 12px;
+  color: var(--retro-cyan);
+  text-decoration: none;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  animation: neonFlicker 4s ease-in-out infinite;
+}
+
+.settings-link {
+  text-decoration: none;
+  font-size: 20px;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.settings-link:hover {
+  opacity: 1;
+}
+
+/* Global tweak for flex centering icons with text */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-xs {
+  gap: var(--space-xs);
+}
+
+.gap-sm {
+  gap: var(--space-sm);
+}
+
+.gap-md {
+  gap: var(--space-md);
+}
+
+/* Ensure icons align well in text */
+.retro-icon {
+  vertical-align: text-bottom;
+}

@@ -1,0 +1,199 @@
+.walkthrough-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 5, 10, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.walkthrough-overlay--exiting {
+    animation: fadeOut 0.5s ease-in forwards;
+}
+
+.walkthrough-card {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--space-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    border: 1px solid var(--retro-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    animation: slideUp 0.4s ease-out;
+}
+
+.walkthrough-icon-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--retro-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px var(--retro-cyan);
+    margin-bottom: var(--space-md);
+}
+
+.walkthrough-title {
+    font-size: 24px;
+    color: var(--retro-cyan);
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.walkthrough-subtitle {
+    font-size: 18px;
+    color: var(--retro-green);
+    margin-bottom: -10px;
+}
+
+.walkthrough-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.walkthrough-desc-sm {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Pack Selection */
+.pack-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    width: 100%;
+    margin-top: var(--space-sm);
+}
+
+.pack-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.pack-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.pack-card--selected {
+    background: var(--retro-green);
+    border-color: var(--retro-green);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+}
+
+.pack-card--selected .pack-name,
+.pack-card--selected .pack-desc {
+    color: #050510;
+}
+
+.pack-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.pack-name {
+    font-family: var(--font-retro);
+    font-size: 12px;
+    color: var(--retro-green);
+    margin-bottom: 2px;
+}
+
+.pack-desc {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Todo Input Step */
+.todo-input-wrapper {
+    width: 100%;
+    position: relative;
+    margin: var(--space-md) 0;
+}
+
+.first-reward-badge {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--coin-gold);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Actions */
+.walkthrough-actions {
+    display: flex;
+    gap: var(--space-md);
+    width: 100%;
+    justify-content: flex-end;
+}
+
+/* Step Dots */
+.step-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: var(--space-sm);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.dot.active {
+    background: var(--retro-cyan);
+    box-shadow: 0 0 8px var(--retro-cyan);
+    transform: scale(1.2);
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

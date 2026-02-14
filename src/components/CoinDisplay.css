@@ -1,0 +1,15 @@
+.coin-display--sm {
+    font-size: 10px;
+}
+
+.coin-display--md {
+    font-size: 12px;
+}
+
+.coin-display--lg {
+    font-size: 16px;
+}
+
+.coin-amount {
+    font-variant-numeric: tabular-nums;
+}

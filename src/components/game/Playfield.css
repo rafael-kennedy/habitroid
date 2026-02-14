@@ -1,0 +1,292 @@
+/* ============================
+   SVG Playfield — Neon Vector
+   ============================ */
+
+/* --- Container --- */
+.playfield-wrapper {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    background: linear-gradient(180deg, #020208 0%, #0a0a1a 100%);
+}
+
+.playfield-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Retro Grid Background --- */
+.playfield-grid line {
+    stroke: rgba(57, 255, 20, 0.08);
+    stroke-width: 1;
+}
+
+@keyframes gridScroll {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(40px);
+    }
+}
+
+.playfield-grid--h {
+    animation: gridScroll 4s linear infinite;
+}
+
+/* --- Paths (Circuit Traces) --- */
+.path-glow {
+    fill: none;
+    stroke: rgba(0, 255, 255, 0.4);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: url(#neonCyan);
+}
+
+.path-core {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* --- Placement Zones --- */
+.zone {
+    fill: rgba(26, 58, 92, 0.4);
+    stroke: rgba(0, 255, 255, 0.3);
+    stroke-width: 1;
+    cursor: pointer;
+    transition: fill 0.2s, stroke 0.2s;
+}
+
+.zone--available {
+    fill: rgba(57, 255, 20, 0.15);
+    stroke: rgba(57, 255, 20, 0.4);
+    stroke-dasharray: 5 5;
+    animation: dashSpin 1s linear infinite;
+}
+
+.zone--selected {
+    fill: rgba(57, 255, 20, 0.5);
+    stroke: #39ff14;
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+    filter: url(#neonGreen);
+    animation: dashSpin 0.6s linear infinite;
+}
+
+.zone--occupied {
+    cursor: default;
+    fill: rgba(26, 58, 92, 0.2);
+    stroke: rgba(0, 255, 255, 0.15);
+}
+
+@keyframes dashSpin {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+/* --- Tower --- */
+.tower-group {
+    filter: url(#neonGreen);
+}
+
+.tower-glow {
+    fill: rgba(57, 255, 20, 0.2);
+}
+
+.tower-hex {
+    fill: #000000;
+    stroke: #39ff14;
+    stroke-width: 2;
+}
+
+.tower-barrel {
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    fill: none;
+    filter: url(#neonWhite);
+}
+
+@keyframes towerSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.tower-barrel-group {
+    transform-origin: center;
+    animation: towerSpin 3s linear infinite;
+}
+
+/* --- Tower Range Indicator --- */
+.tower-range {
+    fill: rgba(57, 255, 20, 0.04);
+    stroke: rgba(57, 255, 20, 0.15);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tower-group:hover .tower-range {
+    opacity: 1;
+}
+
+/* --- Enemy --- */
+.enemy-shape {
+    transition: transform 0.05s linear;
+}
+
+.enemy-shape--basic {
+    fill: #ff2d95;
+    filter: url(#neonPink);
+}
+
+.enemy-shape--fast {
+    fill: #ffea00;
+    filter: url(#neonYellow);
+}
+
+.enemy-shape--armored {
+    fill: #ff6b35;
+    filter: url(#neonOrange);
+}
+
+.enemy-shape--swarm {
+    fill: #bf5af2;
+    filter: url(#neonPurple);
+}
+
+.enemy-shape--boss {
+    fill: #ff3b30;
+    filter: url(#neonRed);
+}
+
+.enemy-core {
+    fill: #ffffff;
+}
+
+.enemy-hp-bg {
+    fill: rgba(255, 255, 255, 0.3);
+}
+
+.enemy-hp-fill {
+    transition: width 0.1s;
+}
+
+.enemy-stun-icon {
+    fill: #ffea00;
+    filter: url(#neonYellow);
+}
+
+@keyframes wobble {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(6deg);
+    }
+
+    75% {
+        transform: rotate(-6deg);
+    }
+}
+
+.enemy-wobble {
+    animation: wobble 0.3s ease-in-out infinite;
+    transform-origin: center;
+}
+
+/* --- Projectile --- */
+.projectile {
+    fill: #5ac8fa;
+    filter: url(#neonBlue);
+}
+
+.projectile-core {
+    fill: #ffffff;
+}
+
+/* --- HUD --- */
+.game-hud {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: rgba(5, 5, 10, 0.88);
+    border-top: 2px solid #00ffff;
+    box-shadow: 0 -4px 16px rgba(0, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 12px;
+    z-index: 10;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.game-hud__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.game-hud__stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #e8e8f0;
+    text-shadow: 0 0 4px currentColor;
+}
+
+.game-hud__stat--hp {
+    color: #ff3b30;
+}
+
+.game-hud__stat--energy {
+    color: #ffea00;
+}
+
+.game-hud__stat--score {
+    color: #ffd700;
+}
+
+.game-hud__stat--wave {
+    color: #e8e8f0;
+}
+
+.game-hud__phase {
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 0 6px currentColor;
+}
+
+.game-hud__phase--combat {
+    color: #ff2d95;
+}
+
+.game-hud__phase--build {
+    color: #39ff14;
+}
+
+.game-hud__score-label {
+    color: rgba(232, 232, 240, 0.4);
+    font-size: 14px;
+}

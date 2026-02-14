@@ -1,0 +1,71 @@
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    background: var(--bg-primary);
+    border-top: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: var(--safe-bottom);
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navbar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-family: var(--font-retro);
+    font-size: 8px;
+    /* Slightly larger text */
+    padding: var(--space-xs) var(--space-sm);
+    transition: all var(--transition-fast);
+    position: relative;
+    min-width: 50px;
+}
+
+.navbar__item:hover {
+    color: var(--text-secondary);
+}
+
+.navbar__item--active {
+    color: var(--retro-cyan);
+}
+
+/* Active indicator line */
+.navbar__item--active::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 2px;
+    background: var(--retro-cyan);
+    box-shadow: 0 0 8px var(--retro-cyan);
+}
+
+.navbar__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+}
+
+.navbar__item--active .navbar__icon {
+    color: var(--retro-cyan);
+    filter: drop-shadow(0 0 5px var(--retro-cyan));
+    transform: translateY(-2px);
+}
+
+.navbar__label {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

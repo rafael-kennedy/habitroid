@@ -1,0 +1,118 @@
+# ──────────────────────────────────────────────────────────────
+# Habitroid – Android Release Pipeline
+#
+# Triggers on version tags (v*.*.*).
+# Builds the web app, wraps with Capacitor, signs, and uploads
+# the AAB to Google Play's internal test track via Fastlane.
+#
+# REQUIRED GITHUB SECRETS:
+#   KEYSTORE_BASE64              – base64 of your upload-keystore.jks
+#   KEYSTORE_PASSWORD            – keystore password
+#   KEY_ALIAS                    – key alias (e.g. "upload")
+#   KEY_PASSWORD                 – key password
+#   PLAY_STORE_SERVICE_ACCOUNT   – base64 of google-play-service-account.json
+# ──────────────────────────────────────────────────────────────
+
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Play Store track to upload to'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - beta
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── Checkout ──
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Node.js ──
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      # ── Capacitor ──
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      # ── Java / Android SDK ──
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # ── Decode Secrets ──
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Decode Service Account JSON
+        run: |
+          echo "${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}" | base64 --decode > google-play-service-account.json
+
+      # ── Build Signed AAB ──
+      - name: Build Release AAB
+        working-directory: android
+        run: |
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/android/app/upload-keystore.jks \
+            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+
+      # ── Fastlane Upload ──
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: android
+
+      - name: Upload to Play Store
+        working-directory: android
+        env:
+          PLAY_STORE_JSON_KEY: ${{ github.workspace }}/google-play-service-account.json
+          KEYSTORE_PATH: app/upload-keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          TRACK="${{ github.event.inputs.track || 'internal' }}"
+          bundle exec fastlane $TRACK
+
+      # ── Cleanup ──
+      - name: Cleanup secrets
+        if: always()
+        run: |
+          rm -f android/app/upload-keystore.jks
+          rm -f google-play-service-account.json

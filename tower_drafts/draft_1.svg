@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="-20 -20 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glow -->
+  <circle cx="0" cy="0" r="15.57578083983488" fill="#ffffff" opacity="0.4" filter="blur(4px)" />
+
+  <!-- Base -->
+  <g transform="scale(0.97348630248968) rotate(347)">
+    <path d="M -10 -10 L 10 -10 L 10 10 L -10 10 Z" fill="#111" stroke="#ff00ff" stroke-width="2.178631081036655" stroke-linejoin="miter" stroke-linecap="butt" />
+    <path d="M -10 -10 L 10 -10 L 10 10 L -10 10 Z" fill="none" stroke="#00ff00" stroke-width="1" transform="scale(0.6)" opacity="0.7" />
+  </g>
+
+  <!-- Barrels (Point Up) -->
+  <g transform="rotate(0)"> 
+     <path d="M -4 0 L 0 -10.124570586333771 L 4 0 Z" fill="#ff00ff" transform="translate(0, 0)" />
+  </g>
+</svg>

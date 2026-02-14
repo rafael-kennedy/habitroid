@@ -1,0 +1,94 @@
+.deck-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.deck-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.deck-card:hover {
+    border-color: var(--retro-cyan);
+}
+
+.deck-card__name {
+    font-size: 11px;
+    color: var(--retro-cyan);
+    margin-bottom: 4px;
+}
+
+.deck-card__count {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.deck-editor__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.deck-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.deck-card-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.deck-card-item__info {
+    flex: 1;
+}
+
+.deck-card-item__name {
+    font-size: 13px;
+    display: block;
+}
+
+.deck-card-item__stats {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.picker-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.picker-card:hover {
+    border-color: var(--retro-green);
+}
+
+.picker-card__name {
+    flex: 1;
+    font-size: 12px;
+}
+
+.picker-card__cost {
+    font-size: 12px;
+    color: var(--retro-yellow);
+}
