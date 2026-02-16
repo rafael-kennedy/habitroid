@@ -6,8 +6,10 @@ export interface Habit {
     id: string;
     name: string;
     icon: string;
-    frequency: 'daily' | 'weekly' | 'custom';
-    customDays?: number[]; // 0=Sun..6=Sat for custom
+    frequency: 'daily' | 'weekly' | 'custom' | 'anytime';
+    customDays?: number[]; // Deprecated, use targetDays
+    targetDays?: number[]; // 0=Sun..6=Sat for daily habits
+    targetCount?: number; // Target completions per week for weekly habits
     coinReward: number;
     streak: number;
     bestStreak: number;
@@ -82,8 +84,11 @@ export interface AppSettings {
     // Daily Spin & Streak Global State
     streakArmor: number;
     dailyCompletionStreak: number;
+    weeklyCompletionStreak: number;
     lastDailyCompletionDate: string; // ISO date
+    lastWeeklyCompletionWeek: string; // ISO week string (e.g. "2023-W42")
     lastSpinDate: string; // ISO date
+    lastWeeklySpinDate: string; // ISO date
     walkthroughCompleted: boolean;
     // Unlockables
     maxDecks: number;
@@ -106,6 +111,7 @@ class HabitroidDB extends Dexie {
     constructor() {
         super('HabitroidDB');
 
+        // ---- Version 1 ----
         this.version(1).stores({
             habits: 'id, name, archived',
             foodEntries: 'id, date, mealType',
@@ -116,19 +122,35 @@ class HabitroidDB extends Dexie {
             settings: 'id',
         });
 
-        // Version 2: Add todos table
+        // ---- Version 2: Add todos table ----
         this.version(2).stores({
             todos: 'id, completed',
         });
+
+        // ---- Future Versions Example ----
+        // this.version(3).stores({
+        //     newTable: 'id, index',
+        //     habits: 'id, name, archived, newIndex' // modifiying existing table
+        // }).upgrade(async tx => {
+        //     // Migration logic here
+        //     await tx.table('habits').toCollection().modify(habit => {
+        //         habit.newIndex = 0;
+        //     });
+        // });
     }
 }
 
 export const db = new HabitroidDB();
 
 // Initialize default settings if not present
+// This function runs on app startup to ensure data integrity
 export async function initializeDB() {
+    // Check if we need to seed initial data
     const existing = await db.settings.get('settings');
-    if (!existing) {
+    const isNewUser = !existing;
+
+    if (isNewUser) {
+        // New User Setup
         await db.settings.put({
             id: 'settings',
             openaiApiKey: '',
@@ -139,40 +161,46 @@ export async function initializeDB() {
             coinBalance: 100, // starter coins
             streakArmor: 0,
             dailyCompletionStreak: 0,
+            weeklyCompletionStreak: 0,
             lastDailyCompletionDate: '',
+            lastWeeklyCompletionWeek: '',
             lastSpinDate: '',
+            lastWeeklySpinDate: '',
             walkthroughCompleted: false,
             maxDecks: 3,
             unlockedMapIds: ['map-serpent'], // Start with only Serpent Pass
             upgrades: {},
         });
     } else {
-        // Migration for existing users
+        // Existing User: Runtime checks for missing fields that might not be covered by schema migrations
+        // (e.g. fields added to existing object stores without a version bump, though version bumps are preferred)
+
         const updates: Partial<AppSettings> = {};
-        if (existing.walkthroughCompleted === undefined) updates.walkthroughCompleted = false;
-        if (existing.streakArmor === undefined) updates.streakArmor = 0;
-        if (existing.dailyCompletionStreak === undefined) updates.dailyCompletionStreak = 0;
-        if (existing.lastDailyCompletionDate === undefined) updates.lastDailyCompletionDate = '';
-        if (existing.lastSpinDate === undefined) updates.lastSpinDate = '';
-        if (existing.maxDecks === undefined) updates.maxDecks = 3;
-        // If migrating, give them default unlocked maps if they played before? 
-        // Or just 'map-serpent'. Let's be strict to the new progression.
-        if (existing.unlockedMapIds === undefined) updates.unlockedMapIds = ['map-serpent', 'map-crossroads', 'map-gauntlet'];
-        // Update: Implementation plan said lock Crossroads/Gauntlet.
-        // But for existing users, maybe we should grandfather them? 
-        // User said "The Crossroads: Lock. Unlock Cost: 1,000 Coins."
-        // I will adhere to the "NewMaps" plan plan. 
-        // Wait, for EXISTING users, if I lock maps they might have played, it's annoying.
-        // But for "New Maps", they are new. 
-        // The plan says "The Crossroads: Lock... The Gauntlet: Lock". 
-        // These are EXISTING maps in the code.
-        // I'll be nice and grandfather existing users to have 'map-crossroads' and 'map-gauntlet' if they are migrating, 
-        // but new users only get serpent.
-        // Actually, to test the feature, I should probably lock them for everyone or make it easy.
-        // Let's stick to the plan: "The Crossroads: Lock... The Gauntlet: Lock."
-        // I will NOT grandfather for now to ensure the feature is visible.
-        if (existing.unlockedMapIds === undefined) updates.unlockedMapIds = ['map-serpent'];
-        if (existing.upgrades === undefined) updates.upgrades = {};
+
+        // Helper to check and set default
+        const ensureField = <K extends keyof AppSettings>(key: K, defaultValue: AppSettings[K]) => {
+            if (existing[key] === undefined) {
+                updates[key] = defaultValue;
+            }
+        };
+
+        ensureField('walkthroughCompleted', false);
+        ensureField('streakArmor', 0);
+        ensureField('dailyCompletionStreak', 0);
+        ensureField('weeklyCompletionStreak', 0);
+        ensureField('lastDailyCompletionDate', '');
+        ensureField('lastWeeklyCompletionWeek', '');
+        ensureField('lastSpinDate', '');
+        ensureField('lastWeeklySpinDate', '');
+        ensureField('maxDecks', 3);
+
+        // Map logic: Ensure at least one map is unlocked.
+        // If they have no unlockedMapIds array at all, give them the default.
+        if (existing.unlockedMapIds === undefined) {
+            updates.unlockedMapIds = ['map-serpent'];
+        }
+
+        ensureField('upgrades', {});
 
         if (Object.keys(updates).length > 0) {
             await db.settings.update('settings', updates);

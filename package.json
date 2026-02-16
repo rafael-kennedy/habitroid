@@ -1,7 +1,7 @@
 {
   "name": "habitroid",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,7 +24,10 @@
     "@capacitor/cli": "^6.2.1",
     "@capacitor/core": "^6.2.1",
     "dexie": "^4.3.0",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.564.0",
     "react": "^19.2.0",
+    "react-confetti-explosion": "^3.0.3",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
     "zustand": "^5.0.11"

@@ -13,6 +13,7 @@ interface EconomyState {
     getRecentTransactions: (limit?: number) => CoinTransaction[];
     updateSettings: (updates: Partial<AppSettings>) => Promise<void>;
     spinDailyGrid: (streakLevel: number) => Promise<{ type: 'coin' | 'card', value: string | number, rarity?: string }>;
+    spinWeeklyGrid: (streakLevel: number) => Promise<{ type: 'coin' | 'card', value: string | number, rarity?: string }>;
 
     // Unlockables
     purchaseDeckSlot: () => Promise<boolean>;
@@ -191,6 +192,56 @@ export const useEconomyStore = create<EconomyState>((set, get) => ({
             // Mark spin as used
             await get().updateSettings({ lastSpinDate: new Date().toISOString().split('T')[0] });
 
+            return { type: 'card', value: cardDef.name, rarity: selectedRarity };
+        }
+    },
+
+    spinWeeklyGrid: async (level) => {
+        // Weekly Spin: Higher stakes!
+        // Level: Weekly Streak Count
+
+        // Always 50% chance of Card vs Coin, but much better rarity/amounts.
+        const roll = Math.random();
+        let rewardType: 'coin' | 'card' = 'coin';
+        if (roll < 0.5) rewardType = 'card';
+
+        if (rewardType === 'coin') {
+            // Huge coin amounts
+            let amount = 500 + Math.floor(Math.random() * 1000); // 500-1500 base
+            // Multiplier based on streak
+            amount = Math.floor(amount * (1 + level * 0.1)); // +10% per streak week
+
+            await get().earnCoins(amount, 'shop', `Weekly Spin (Streak ${level})`);
+            await get().updateSettings({ lastWeeklySpinDate: new Date().toISOString().split('T')[0] });
+            return { type: 'coin', value: amount };
+        } else {
+            // Card Logic - Better rarities
+            // No commons allowed!
+            let rarityWeights: Record<Rarity, number>;
+            rarityWeights = { common: 0, uncommon: 40, rare: 40, legendary: 20 };
+
+            // Boost legendary chance if streak is high (>4 weeks)
+            if (level > 4) rarityWeights = { common: 0, uncommon: 20, rare: 50, legendary: 30 };
+
+            const rRoll = Math.random() * 100;
+            let selectedRarity: Rarity = 'uncommon';
+            let cumulative = 0;
+
+            if (rRoll < (cumulative += rarityWeights.common)) selectedRarity = 'common'; // Should be 0
+            else if (rRoll < (cumulative += rarityWeights.uncommon)) selectedRarity = 'uncommon';
+            else if (rRoll < (cumulative += rarityWeights.rare)) selectedRarity = 'rare';
+            else selectedRarity = 'legendary';
+
+            const pool = CARD_DEFINITIONS.filter(c => c.rarity === selectedRarity);
+            const cardDef = pool[Math.floor(Math.random() * pool.length)];
+
+            await db.cards.add({
+                id: crypto.randomUUID(),
+                definitionId: cardDef.id,
+                acquiredAt: new Date().toISOString(),
+            });
+
+            await get().updateSettings({ lastWeeklySpinDate: new Date().toISOString().split('T')[0] });
             return { type: 'card', value: cardDef.name, rarity: selectedRarity };
         }
     },

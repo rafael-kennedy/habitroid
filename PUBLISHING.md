@@ -88,11 +88,45 @@ To allow Fastlane and GitHub Actions to upload your app automatically, you need 
 8.  Click **Invite user** (or **Save changes**).
 
 ### 5. First Manual Upload
-Google requires the very first AAB to be uploaded manually via the web console to "register" the package name.
-1.  `npm run cap:sync`
-2.  Open Android Studio: `npm run cap:open`
-3.  **Build > Generate Signed Bundle** using your `.jks` file.
-4.  Upload the `.aab` to the **Internal Testing** track in Play Console.
+
+Google requires the very first App Bundle (`.aab`) to be uploaded manually via the web console to "register" the package name (`com.habitroid.app`) and link it to your signing key.
+
+#### Step 5a: Create the App in Console (If you haven't yet)
+1.  Go to [Play Console](https://play.google.com/console).
+2.  Click **Create app** (top right).
+3.  **App name**: `Habitroid`
+4.  **Default language**: English (United States) - or your preference.
+5.  **App or Game**: **Game**.
+6.  **Free or Paid**: **Free**.
+7.  Check the **Declarations** boxes (Developer Program Policies, US export laws).
+8.  Click **Create app**.
+
+#### Step 5b: Generate the Signed Bundle
+Run this helper script. It will set the correct Java version and ask for your keystore password to sign the bundle properly:
+
+```bash
+./scripts/manual-bundle.sh
+```
+
+This will generate the **signed** file at:
+`android/app/build/outputs/bundle/release/app-release.aab`
+
+#### Step 5c: Upload to Internal Testing
+1.  In the Play Console sidebar, find the **Testing** section.
+2.  Click **Internal testing**.
+3.  Click **Create new release**.
+4.  If asked about "Play App Signing", click **Choose signing key** > **Use Google-generated key** (recommended).
+5.  **App bundles**: Click **Upload**.
+6.  Navigate to your project folder and select the `app-release.aab` file you just built.
+    *   *Path: `habitroid/android/app/build/outputs/bundle/release/app-release.aab`*
+7.  Wait for the upload to finish. If successful, you'll see the version code (e.g., 1) and size.
+8.  **Release Name**: You can leave this as the version code or name it "Initial Release".
+9.  **Release Notes**: Enter a short note like "Initial internal test release."
+10. Click **Next** (bottom right).
+11. You might see warnings (e.g., about testers not being assigned yet) — you can ignore these for now.
+12. Click **Save** and then **Start rollout to Internal testing**.
+
+**Success!** Your app is now registered. All future updates can be done automatically via the GitHub Actions pipeline or Fastlane commands.
 
 ---
 

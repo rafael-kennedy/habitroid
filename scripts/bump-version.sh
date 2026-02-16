@@ -11,7 +11,7 @@
 set -euo pipefail
 
 BUMP_TYPE="${1:-patch}"
-GRADLE_FILE="$(cd "$(dirname "$0")/.." && pwd)/android/app/build.gradle.kts"
+GRADLE_FILE="$(cd "$(dirname "$0")/.." && pwd)/android/app/build.gradle"
 PACKAGE_JSON="$(cd "$(dirname "$0")/.." && pwd)/package.json"
 
 if [ ! -f "$GRADLE_FILE" ]; then
@@ -20,9 +20,11 @@ if [ ! -f "$GRADLE_FILE" ]; then
     exit 1
 fi
 
-# Get current versionName from build.gradle.kts (or set default)
-CURRENT_VERSION=$(grep -oP 'versionName\s*=\s*"\K[^"]+' "$GRADLE_FILE" 2>/dev/null || echo "1.0.0")
-CURRENT_CODE=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' "$GRADLE_FILE" 2>/dev/null || echo "1")
+# Get current versionName from build.gradle
+# Matches: versionName "1.0.0" (Groovy syntax, no equals sign usually)
+CURRENT_VERSION=$(grep -oP 'versionName\s+"\K[^"]+' "$GRADLE_FILE" 2>/dev/null || echo "1.0.0")
+# Matches: versionCode 1
+CURRENT_CODE=$(grep -oP 'versionCode\s+\K[0-9]+' "$GRADLE_FILE" 2>/dev/null || echo "1")
 
 # Parse semver
 IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
@@ -54,13 +56,17 @@ echo "📦 Bumping version:"
 echo "   Version: $CURRENT_VERSION → $NEW_VERSION"
 echo "   Code:    $CURRENT_CODE → $NEW_CODE"
 
-# Update build.gradle.kts
+# Update build.gradle (Groovy)
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s/versionCode\s*=\s*[0-9]*/versionCode = $NEW_CODE/" "$GRADLE_FILE"
-    sed -i '' "s/versionName\s*=\s*\"[^\"]*\"/versionName = \"$NEW_VERSION\"/" "$GRADLE_FILE"
+    # -i '' for macOS sed
+    # Match "versionCode <digits>" and replace completely
+    sed -i '' -E "s/versionCode [0-9]+/versionCode $NEW_CODE/" "$GRADLE_FILE"
+    # Match 'versionName "<anything>"' and replace
+    sed -i '' -E "s/versionName \"[^\"]+\"/versionName \"$NEW_VERSION\"/" "$GRADLE_FILE"
 else
-    sed -i "s/versionCode\s*=\s*[0-9]*/versionCode = $NEW_CODE/" "$GRADLE_FILE"
-    sed -i "s/versionName\s*=\s*\"[^\"]*\"/versionName = \"$NEW_VERSION\"/" "$GRADLE_FILE"
+    # Linux sed
+    sed -i -E "s/versionCode [0-9]+/versionCode $NEW_CODE/" "$GRADLE_FILE"
+    sed -i -E "s/versionName \"[^\"]+\"/versionName \"$NEW_VERSION\"/" "$GRADLE_FILE"
 fi
 
 # Update package.json version too

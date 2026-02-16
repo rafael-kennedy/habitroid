@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useCardStore } from '../store/cardStore';
 import { useEconomyStore } from '../store/economyStore';
 import { CARD_DEFINITIONS, type CardDefinition } from '../data/cardDefinitions';

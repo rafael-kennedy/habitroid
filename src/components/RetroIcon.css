@@ -8,6 +8,17 @@
     filter: drop-shadow(0 0 2px currentColor);
 }
 
+/* Lucide icons are stroke-based by default */
+.retro-icon {
+    display: inline-block;
+    vertical-align: middle;
+    transition: all var(--transition-fast);
+}
+
+.retro-icon--glow {
+    filter: drop-shadow(0 0 2px currentColor);
+}
+
 /* Specific adjustments for stroked icons */
 .retro-icon path[fill="none"],
 .retro-icon polyline[fill="none"],

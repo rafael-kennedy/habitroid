@@ -123,7 +123,6 @@ describe('HabitStore', () => {
         });
 
         it('should calculate streak correctly for consecutive days', async () => {
-            const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
             const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
 
@@ -142,7 +141,6 @@ describe('HabitStore', () => {
         });
 
         it('should reset streak if there is a gap in completions', async () => {
-            const today = new Date().toISOString().split('T')[0];
             const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString().split('T')[0];
 
             await db.habits.put({
@@ -160,7 +158,6 @@ describe('HabitStore', () => {
         });
 
         it('should track bestStreak', async () => {
-            const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
             await db.habits.put({
