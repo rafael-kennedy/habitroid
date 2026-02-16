@@ -102,7 +102,7 @@ jobs:
         working-directory: android
         env:
           PLAY_STORE_JSON_KEY: ${{ github.workspace }}/google-play-service-account.json
-          KEYSTORE_PATH: app/upload-keystore.jks
+          KEYSTORE_PATH: ${{ github.workspace }}/android/app/upload-keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
