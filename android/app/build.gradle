@@ -7,8 +7,14 @@ android {
         applicationId "com.habitroid.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.0.2"
+        
+        // Use properties passed from CI, or fallback to defaults
+        def buildVersionCode = project.hasProperty('versionCode') ? project.property('versionCode').toInteger() : 3
+        def buildVersionName = project.hasProperty('versionName') ? project.property('versionName') : "1.0.2"
+        
+        versionCode buildVersionCode
+        versionName buildVersionName
+        
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
