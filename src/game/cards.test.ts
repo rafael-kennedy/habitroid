@@ -62,7 +62,7 @@ function makeBaseState(): GameState {
     return createGameState('map-serpent', ['c01', 'c02']);
 }
 
-function stateWithAction(cardId: string, targetId: string): GameState {
+function stateWithAction(cardId: string, _targetId?: string): GameState {
     const state = makeBaseState();
     state.hand = [cardId];
     state.energy = 20;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CardDefinition, TowerEffect, SpecialEffect, DamageType } from '../data/cardDefinitions';
-import RetroIcon, { type IconName } from './RetroIcon';
+import RetroIcon from './RetroIcon';
 import Card from './Card';
 import './CardDetailModal.css';
 

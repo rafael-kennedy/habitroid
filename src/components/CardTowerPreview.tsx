@@ -31,6 +31,9 @@ export default function CardTowerPreview({ card, size = 64, showGlow: _showGlow 
         cooldown: 0,
         targetId: null,
         angle: -Math.PI / 2, // Point up
+        killCount: 0,
+        disabled: false,
+        tags: [],
     }), [card]);
 
     // Calculate view box to center the tower (which is at 0,0)

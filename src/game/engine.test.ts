@@ -288,7 +288,8 @@ describe('Advanced Mechanics', () => {
             id: 't1', x: 0, y: 0, range: 2000, cooldown: 0, fireRate: 1,
             targetStrategy: 'nearest', damage: 10, multishot: 0, knockback: 0, homing: true, special: 'none', specialPower: 0,
             targetId: null, angle: 0, primeCardDefId: 'c1', supportCardDefIds: [],
-            zoneId: 'z1', damageType: 'kinetic'
+            zoneId: 'z1', damageType: 'kinetic',
+            killCount: 0, disabled: false, tags: []
         } as Tower;
 
         let state = { enemies: [e1, e2], towers: [tower], projectiles: [], score: 0 } as unknown as GameState;
@@ -319,7 +320,8 @@ describe('Advanced Mechanics', () => {
             multishot: 2, // 3 shots
             targetStrategy: 'nearest', damage: 10, knockback: 0, homing: true, special: 'none', specialPower: 0,
             targetId: null, angle: 0, primeCardDefId: 'c1', supportCardDefIds: [],
-            zoneId: 'z1', damageType: 'kinetic'
+            zoneId: 'z1', damageType: 'kinetic',
+            killCount: 0, disabled: false, tags: []
         } as Tower;
 
         const state = { enemies: [e1], towers: [tower], projectiles: [], score: 0 } as unknown as GameState;
@@ -337,7 +339,8 @@ describe('Advanced Mechanics', () => {
             special: 'generate_energy', specialPower: 5,
             multishot: 0, knockback: 0, homing: true, targetStrategy: 'nearest',
             targetId: null, angle: 0, primeCardDefId: 'c1', supportCardDefIds: [],
-            zoneId: 'z1', damageType: 'kinetic', damage: 0
+            zoneId: 'z1', damageType: 'kinetic', damage: 0,
+            killCount: 0, disabled: false, tags: []
         } as Tower;
 
         // Mock piles
