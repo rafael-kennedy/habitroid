@@ -141,7 +141,7 @@ Add these to your repository settings for the `Android Release` workflow:
 | `KEYSTORE_PASSWORD` | The password used during keystore creation |
 | `KEY_ALIAS` | Usually `upload` |
 | `KEY_PASSWORD` | Usually the same as keystore password |
-| `PLAY_STORE_SERVICE_ACCOUNT` | The content of your Service Account JSON key |
+| `PLAY_STORE_SERVICE_ACCOUNT` | `cat google-play-service-account.json \| base64` |
 
 ---
 

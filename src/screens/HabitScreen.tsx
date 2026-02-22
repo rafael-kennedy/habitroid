@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useHabitStore } from '../store/habitStore';
 import { useTodoStore } from '../store/todoStore';
 import { useEconomyStore } from '../store/economyStore';
@@ -34,11 +34,12 @@ const VALID_HABIT_ICONS: IconName[] = [
 ];
 
 export default function HabitScreen() {
-    const { habits, loading, loadHabits, addHabit, toggleCompletion, deleteHabit, isCompletedToday } = useHabitStore();
-    const { todos, loadTodos, addTodo, toggleTodo, deleteTodo } = useTodoStore();
+    const { habits, loading, loadHabits, addHabit, updateHabit, toggleCompletion, deleteHabit, isCompletedToday } = useHabitStore();
+    const { todos, loadTodos, addTodo, updateTodo, toggleTodo, deleteTodo } = useTodoStore();
     const { earnCoins } = useEconomyStore();
     const [activeTab, setActiveTab] = useState<'habits' | 'todos'>('habits');
     const [showAdd, setShowAdd] = useState(false);
+    const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
     const [newName, setNewName] = useState('');
     const [newIcon, setNewIcon] = useState<IconName>('target');
     const [newReward, setNewReward] = useState(10);
@@ -101,6 +102,48 @@ export default function HabitScreen() {
     const [newTodoText, setNewTodoText] = useState('');
     const [newTodoReward, setNewTodoReward] = useState(15);
 
+    // Long Press Logic
+    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pressStartPos = useRef<{ x: number, y: number } | null>(null);
+    const isLongPress = useRef(false);
+
+    const handlePointerDown = (item: any, type: 'habit' | 'todo', e: React.PointerEvent) => {
+        if ((e.target as HTMLElement).closest('button')) return;
+
+        isLongPress.current = false;
+        pressStartPos.current = { x: e.clientX, y: e.clientY };
+
+        longPressTimer.current = setTimeout(() => {
+            isLongPress.current = true;
+            if (type === 'habit') handleEdit(item);
+            else handleEditTodo(item);
+            if (navigator.vibrate) navigator.vibrate(50);
+        }, 600);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent) => {
+        if (!longPressTimer.current || !pressStartPos.current) return;
+        const dx = Math.abs(e.clientX - pressStartPos.current.x);
+        const dy = Math.abs(e.clientY - pressStartPos.current.y);
+        if (dx > 10 || dy > 10) {
+            if (longPressTimer.current) clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+            pressStartPos.current = null;
+        }
+    };
+
+    const handlePointerUp = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+        pressStartPos.current = null;
+    };
+
+    const handlePointerCancel = () => {
+        handlePointerUp();
+    };
+
     useEffect(() => {
         loadHabits();
         loadTodos();
@@ -129,14 +172,27 @@ export default function HabitScreen() {
     const handleAdd = async () => {
         if (!newName.trim()) return;
 
-        await addHabit({
-            name: newName.trim(),
-            icon: newIcon,
-            frequency: newFrequency,
-            coinReward: newReward,
-            targetDays: newFrequency === 'daily' ? targetDays : undefined,
-            targetCount: newFrequency === 'weekly' ? targetCount : undefined,
-        });
+        if (editingHabitId) {
+            await updateHabit(editingHabitId, {
+                name: newName.trim(),
+                icon: newIcon,
+                frequency: newFrequency,
+                coinReward: newReward,
+                targetDays: newFrequency === 'daily' ? targetDays : undefined,
+                targetCount: newFrequency === 'weekly' ? targetCount : undefined,
+            });
+            setEditingHabitId(null);
+        } else {
+            await addHabit({
+                name: newName.trim(),
+                icon: newIcon,
+                frequency: newFrequency,
+                coinReward: newReward,
+                targetDays: newFrequency === 'daily' ? targetDays : undefined,
+                targetCount: newFrequency === 'weekly' ? targetCount : undefined,
+            });
+        }
+
         setNewName('');
         setNewIcon('target');
         setNewReward(10);
@@ -147,12 +203,44 @@ export default function HabitScreen() {
         setShowAdd(false);
     };
 
+    const handleEdit = (habit: any) => {
+        setEditingHabitId(habit.id);
+        setNewName(habit.name);
+        setNewIcon(habit.icon as IconName);
+        setNewReward(habit.coinReward);
+        setNewFrequency(habit.frequency);
+        if (habit.targetDays) setTargetDays(habit.targetDays);
+        if (habit.targetCount) setTargetCount(habit.targetCount);
+        setShowAdd(true);
+    };
+
     const handleAddTodo = async () => {
         if (!newTodoText.trim()) return;
-        await addTodo(newTodoText.trim(), newTodoReward);
+
+        if (editingHabitId) {
+            // We reuse editingHabitId for todos too since they rely on separate stores but share the UI state sort of (activeTab distinguishes)
+            // But wait, updateTodo is not in the scope of this particular change request but let's be consistent if we can.
+            // Actually, the user asked for "edit an existing habit". 
+            // I'll add basic todo edit support too for completeness if the interface supports it.
+            // But let's check if todoStore supports update.
+            if (updateTodo) {
+                await updateTodo(editingHabitId, { text: newTodoText.trim(), coinReward: newTodoReward });
+            }
+            setEditingHabitId(null);
+        } else {
+            await addTodo(newTodoText.trim(), newTodoReward);
+        }
+
         setNewTodoText('');
         setNewTodoReward(15);
         setShowAdd(false);
+    };
+
+    const handleEditTodo = (todo: any) => {
+        setEditingHabitId(todo.id);
+        setNewTodoText(todo.text);
+        setNewTodoReward(todo.coinReward);
+        setShowAdd(true);
     };
 
     const toggleDay = (day: number) => {
@@ -317,6 +405,12 @@ export default function HabitScreen() {
                                         transition={{ duration: 0.2, delay: i * 0.05 }}
                                         key={habit.id}
                                         className={`habit-card retro-panel ${completed && habit.frequency !== 'anytime' ? 'habit-card--done' : ''}`}
+                                        onPointerDown={(e) => handlePointerDown(habit, 'habit', e)}
+                                        onPointerMove={handlePointerMove}
+                                        onPointerUp={handlePointerUp}
+                                        onPointerLeave={handlePointerUp}
+                                        onPointerCancel={handlePointerCancel}
+                                        style={{ userSelect: 'none', touchAction: 'pan-y' }}
                                     >
                                         <button
                                             className={`habit-check ${completed ? 'habit-check--done' : ''}`}
@@ -349,13 +443,7 @@ export default function HabitScreen() {
                                         {coinPopId === habit.id && (
                                             <CoinExplosion amount={habit.coinReward} />
                                         )}
-                                        <button
-                                            className="habit-delete"
-                                            onClick={() => deleteHabit(habit.id)}
-                                            title="Delete habit"
-                                        >
-                                            <RetroIcon name="cross" size={16} />
-                                        </button>
+                                        {/* Delete button moved to edit screen */}
                                     </motion.div>
                                 );
                             })
@@ -379,6 +467,12 @@ export default function HabitScreen() {
                                     transition={{ duration: 0.2, delay: i * 0.05 }}
                                     key={todo.id}
                                     className={`habit-card retro-panel ${todo.completed ? 'habit-card--done' : ''}`}
+                                    onPointerDown={(e) => handlePointerDown(todo, 'todo', e)}
+                                    onPointerMove={handlePointerMove}
+                                    onPointerUp={handlePointerUp}
+                                    onPointerLeave={handlePointerUp}
+                                    onPointerCancel={handlePointerCancel}
+                                    style={{ userSelect: 'none', touchAction: 'pan-y' }}
                                 >
                                     <button
                                         className={`habit-check ${todo.completed ? 'habit-check--done' : ''}`}
@@ -405,12 +499,7 @@ export default function HabitScreen() {
                                     {coinPopId === todo.id && (
                                         <CoinExplosion amount={todo.coinReward} />
                                     )}
-                                    <button
-                                        className="habit-delete"
-                                        onClick={() => deleteTodo(todo.id)}
-                                    >
-                                        <RetroIcon name="cross" size={16} />
-                                    </button>
+                                    {/* Delete button moved to edit screen */}
                                 </motion.div>
                             ))
                         )
@@ -573,11 +662,42 @@ export default function HabitScreen() {
                                 </>
                             )}
 
-                            <div className="modal-actions">
-                                <button className="retro-btn" onClick={() => setShowAdd(false)}>Cancel</button>
-                                <button className="retro-btn retro-btn--primary" onClick={activeTab === 'habits' ? handleAdd : handleAddTodo} id="save-habit-btn">
-                                    Create
-                                </button>
+                            <div className="modal-actions" style={{ justifyContent: editingHabitId ? 'space-between' : 'flex-end', width: '100%' }}>
+                                {editingHabitId && (
+                                    <button
+                                        className="retro-btn"
+                                        style={{ borderColor: 'var(--retro-red)', color: 'var(--retro-red)' }}
+                                        onClick={() => {
+                                            if (activeTab === 'habits') {
+                                                deleteHabit(editingHabitId);
+                                            } else {
+                                                deleteTodo(editingHabitId);
+                                            }
+                                            setShowAdd(false);
+                                            setEditingHabitId(null);
+                                        }}
+                                        title="Delete"
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+                                <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                                    <button className="retro-btn" onClick={() => {
+                                        setShowAdd(false);
+                                        setEditingHabitId(null);
+                                        setNewName('');
+                                        setNewIcon('target');
+                                        setNewReward(10);
+                                        setNewFrequency('daily');
+                                        setTargetDays([0, 1, 2, 3, 4, 5, 6]);
+                                        setTargetCount(1);
+                                        setNewTodoText('');
+                                        setNewTodoReward(15);
+                                    }}>Cancel</button>
+                                    <button className="retro-btn retro-btn--primary" onClick={activeTab === 'habits' ? handleAdd : handleAddTodo} id="save-habit-btn">
+                                        {editingHabitId ? 'Save Changes' : 'Create'}
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>

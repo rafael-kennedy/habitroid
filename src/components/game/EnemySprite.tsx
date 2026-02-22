@@ -3,6 +3,7 @@ import type { Enemy } from '../../game/types';
 
 interface Props {
     enemy: Enemy;
+    onClick: (enemyId: string) => void;
 }
 
 const ENEMY_COLORS: Record<string, string> = {
@@ -13,14 +14,13 @@ const ENEMY_COLORS: Record<string, string> = {
     boss: '#ff3b30',
 };
 
-function EnemySprite({ enemy }: Props) {
+function EnemySprite({ enemy, onClick }: Props) {
     if (!enemy.alive) return null;
 
     const color = ENEMY_COLORS[enemy.type] || '#fff';
     const size = enemy.type === 'boss' ? 12 : 6;
     const hpPct = Math.max(0, enemy.hp / enemy.maxHp);
     const stunned = enemy.effects.some(e => e.type === 'stun' && e.remaining > 0);
-    const isWobbly = enemy.type === 'fast' || enemy.type === 'swarm';
 
     // Shape based on enemy type
     let shape: React.ReactNode;
@@ -54,8 +54,8 @@ function EnemySprite({ enemy }: Props) {
     const barY = size + 6;
 
     return (
-        <g transform={`translate(${enemy.x}, ${enemy.y})`}>
-            <g className={isWobbly ? 'enemy-wobble' : undefined}>
+        <g transform={`translate(${enemy.x}, ${enemy.y})`} onClick={(e) => { e.stopPropagation(); onClick(enemy.id); }} style={{ cursor: 'pointer' }}>
+            <g>
                 {shape}
 
                 {/* Inner white core */}

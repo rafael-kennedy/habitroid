@@ -3,10 +3,11 @@ import type { GameState } from '../../game/types';
 
 interface VFX {
     id: string;
-    type: 'hit' | 'death';
+    type: 'hit' | 'death' | 'text';
     x: number;
     y: number;
     color: string;
+    text?: string;
     born: number;          // performance.now() when created
     duration: number;      // ms
 }
@@ -71,6 +72,17 @@ function VFXLayer({ state }: Props) {
                     born: now,
                     duration: DEATH_DURATION,
                 });
+                // Floating text for energy/gold
+                newVfx.push({
+                    id: `txt-${++vfxIdCounter}`,
+                    type: 'text',
+                    text: '+1⚡',
+                    x: old.x,
+                    y: old.y - 10,
+                    color: '#ffea00', // Gold/Energy color
+                    born: now,
+                    duration: 1000,
+                });
             }
         }
 
@@ -107,6 +119,9 @@ function VFXLayer({ state }: Props) {
                 }
                 if (vfx.type === 'death') {
                     return <DeathBurst key={vfx.id} vfx={vfx} age={age} />;
+                }
+                if (vfx.type === 'text') {
+                    return <FloatingText key={vfx.id} vfx={vfx} age={age} />;
                 }
                 return null;
             })}
@@ -192,3 +207,23 @@ function DeathBurst({ vfx, age }: { vfx: VFX; age: number }) {
 }
 
 export default memo(VFXLayer);
+
+function FloatingText({ vfx, age }: { vfx: VFX; age: number }) {
+    const yOffset = age * 20; // Float up
+    const opacity = 1 - Math.pow(age, 3); // Fade out late
+
+    return (
+        <text
+            x={vfx.x}
+            y={vfx.y - yOffset}
+            fill={vfx.color}
+            fontSize="12"
+            fontWeight="bold"
+            textAnchor="middle"
+            opacity={opacity}
+            style={{ textShadow: '0 1px 2px black', fontFamily: 'monospace' }}
+        >
+            {vfx.text}
+        </text>
+    );
+}

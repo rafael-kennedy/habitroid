@@ -10,16 +10,21 @@ import CardDetailModal from '../components/CardDetailModal';
 import CardTowerPreview from '../components/CardTowerPreview';
 import SvgPlayfield from '../components/game/SvgPlayfield';
 import GameHUD from '../components/game/GameHUD';
+import EnemyInfo from '../components/game/EnemyInfo';
+import TowerInfo from '../components/game/TowerInfo';
+import CurrentEnemiesPanel from '../components/game/CurrentEnemiesPanel';
 import './GameScreen.css';
 
 export default function GameScreen() {
     const { decks, collection, loadCards } = useCardStore();
-    const { earnCoins, settings } = useEconomyStore();
+    const { earnCoins, settings, updatePersonalBest } = useEconomyStore();
     const gameStateRef = useRef<GameState | null>(null);
     const animFrameRef = useRef<number>(0);
     const lastTimeRef = useRef<number>(0);
 
     const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null);
+    const [selectedHandIndex, setSelectedHandIndex] = useState<number | null>(null);
+    const [selectedEnemyId, setSelectedEnemyId] = useState<string | null>(null);
     const [gameActive, setGameActive] = useState(false);
     const [selectedMap, setSelectedMap] = useState<string>('');
     const [selectedDeck, setSelectedDeck] = useState<string>('');
@@ -55,7 +60,7 @@ export default function GameScreen() {
             gameStateRef.current = endWave(current);
             setUiPhase(gameStateRef.current!.phase);
             if (gameStateRef.current!.phase === 'DRAW_PHASE') {
-                gameStateRef.current = drawCards(gameStateRef.current!, 5);
+                gameStateRef.current = drawCards(gameStateRef.current!, 3);
                 setHand([...gameStateRef.current!.hand]);
                 setUiPhase('PLACEMENT_PHASE');
             }
@@ -70,18 +75,25 @@ export default function GameScreen() {
                 waves: current.currentWave,
             });
 
+            // Update Personal Best
+            // Note: currentWave is 0-indexed, so waves completed is strictly currentWave if we died during it?
+            // Actually, if we are in wave 5 (index 5) and die, we reached wave 6.
+            // But let's track "Waves Completed" or "Highest Wave Reached"?
+            // "Wave Reached" is usually currentWave + 1.
+            const waveReached = current.currentWave + 1;
+            updatePersonalBest(current.mapId, waveReached);
+
             // Calculate Coin Gain with Scavenger Protocol
             const scavengerLevel = settings?.upgrades?.['scavenger_protocol'] || 0;
             const bonusMultiplier = 1 + (scavengerLevel * 0.10); // +10% per level
 
-            let baseCoins = 0;
+            let baseCoins = Math.floor(current.score / 20) + 10;
             if (current.phase === 'VICTORY') {
-                baseCoins = Math.floor(current.score / 10) + 50;
-                earnCoins(Math.floor(baseCoins * bonusMultiplier), 'game', `Tower defense victory! Score: ${current.score} (Bonus: x${bonusMultiplier.toFixed(1)})`);
-            } else {
-                baseCoins = Math.floor(current.score / 20) + 10;
-                earnCoins(Math.floor(baseCoins * bonusMultiplier), 'game', `Tower defense - Wave ${current.currentWave + 1} (Bonus: x${bonusMultiplier.toFixed(1)})`);
+                // Should be rare/impossible in endless, but fallback
+                baseCoins += 50;
             }
+
+            earnCoins(Math.floor(baseCoins * bonusMultiplier), 'game', `Tower defense - Wave ${waveReached} (Bonus: x${bonusMultiplier.toFixed(1)})`);
 
             // Final snapshot, no more frames
             setGameSnapshot({ ...gameStateRef.current! });
@@ -113,13 +125,14 @@ export default function GameScreen() {
         const state = createGameState(selectedMap, cardDefIds, settings?.upgrades || {});
         gameStateRef.current = state;
 
-        gameStateRef.current = drawCards(gameStateRef.current!, 5);
+        gameStateRef.current = drawCards(gameStateRef.current!, 3);
         setHand([...gameStateRef.current!.hand]);
         setGameSnapshot({ ...gameStateRef.current! });
         setUiPhase('PLACEMENT_PHASE');
         setGameActive(true);
         setGameResult(null);
         setSelectedZoneId(null);
+        setSelectedEnemyId(null);
         lastTimeRef.current = 0;
 
         animFrameRef.current = requestAnimationFrame(gameLoop);
@@ -134,12 +147,81 @@ export default function GameScreen() {
 
     // Zone click handler — from SVG component
     const handleZoneClick = useCallback((zoneId: string) => {
-        if (!gameStateRef.current || gameStateRef.current.phase === 'COMBAT_PHASE') return;
+        if (!gameStateRef.current) return;
+
+        // If a card is selected from hand, try to place it
+        if (selectedHandIndex !== null) {
+            const state = gameStateRef.current;
+            const cardDefId = state.hand[selectedHandIndex];
+            if (cardDefId) {
+                const def = CARD_DEFINITIONS.find(c => c.id === cardDefId);
+                // Only allow units to be placed on empty zones
+                if (def?.type === 'unit') {
+                    gameStateRef.current = placeCard(state, cardDefId, zoneId);
+                    setHand([...gameStateRef.current.hand]);
+                    setGameSnapshot({ ...gameStateRef.current });
+                    setSelectedHandIndex(null); // Deselect after placement
+                }
+            }
+            return;
+        }
+
+        // Just select zone
         setSelectedZoneId(zoneId);
-    }, []);
+        setSelectedEnemyId(null);
+    }, [selectedHandIndex]);
+
+    const handleTowerClick = useCallback((towerId: string, zoneId: string) => {
+        if (!gameStateRef.current) return;
+
+        // If a card is selected from hand, try to apply augment
+        if (selectedHandIndex !== null) {
+            const state = gameStateRef.current;
+            const cardDefId = state.hand[selectedHandIndex];
+            if (cardDefId) {
+                const def = CARD_DEFINITIONS.find(c => c.id === cardDefId);
+                // Allow augments to be placed on existing towers
+                if (def?.type === 'augment') {
+                    gameStateRef.current = placeCard(state, cardDefId, towerId);
+                    setHand([...gameStateRef.current.hand]);
+                    setGameSnapshot({ ...gameStateRef.current });
+                    setSelectedHandIndex(null); // Deselect after placement
+                }
+            }
+            return;
+        }
+
+        // Just select tower (via zone selection)
+        setSelectedZoneId(zoneId);
+        setSelectedEnemyId(null);
+    }, [selectedHandIndex]);
+
+    const handleEnemyClick = useCallback((enemyId: string) => {
+        if (selectedHandIndex !== null) {
+            // Future prep: allow targeting enemies with Action spells
+            const state = gameStateRef.current;
+            const cardDefId = state?.hand[selectedHandIndex];
+            if (cardDefId) {
+                const def = CARD_DEFINITIONS.find(c => c.id === cardDefId);
+                if (def?.type === 'action' && state) {
+                    gameStateRef.current = placeCard(state, cardDefId, enemyId);
+                    setHand([...gameStateRef.current.hand]);
+                    setGameSnapshot({ ...gameStateRef.current });
+                    setSelectedHandIndex(null);
+                    return;
+                }
+            }
+        }
+
+        setSelectedEnemyId(enemyId);
+        setSelectedZoneId(null);
+        setSelectedHandIndex(null);
+    }, [selectedHandIndex]);
 
     const handleBackgroundClick = useCallback(() => {
         setSelectedZoneId(null);
+        setSelectedHandIndex(null);
+        setSelectedEnemyId(null);
     }, []);
 
     const handleStartWave = () => {
@@ -203,7 +285,12 @@ export default function GameScreen() {
                                         {!isUnlocked && <RetroIcon name="lock" size={14} color="var(--text-muted)" />}
                                     </div>
                                     <p className="map-card__info">
-                                        {map.waves.length} waves · {map.paths.length} path{map.paths.length > 1 ? 's' : ''}
+                                        Endless Mode · {map.paths.length} path{map.paths.length > 1 ? 's' : ''}
+                                        {isUnlocked && settings?.personalBests?.[map.id] ? (
+                                            <span style={{ display: 'block', color: 'var(--retro-green)', marginTop: 4 }}>
+                                                Best: Wave {settings.personalBests[map.id]}
+                                            </span>
+                                        ) : null}
                                     </p>
                                     {!isUnlocked && (
                                         <div style={{ marginTop: 8, color: 'var(--retro-gold)', fontSize: 12, display: 'flex', alignItems: 'center' }}>
@@ -259,6 +346,8 @@ export default function GameScreen() {
                     state={gameSnapshot}
                     selectedZoneId={selectedZoneId}
                     onZoneClick={handleZoneClick}
+                    onTowerClick={handleTowerClick}
+                    onEnemyClick={handleEnemyClick}
                     onBackgroundClick={handleBackgroundClick}
                 />
             )}
@@ -266,70 +355,72 @@ export default function GameScreen() {
             {/* DOM HUD */}
             {gameSnapshot && <GameHUD state={gameSnapshot} />}
 
-            {/* Tower Selection Modal */}
-            {uiPhase === 'PLACEMENT_PHASE' && selectedZoneId && (
-                <div className="tower-selection-overlay" onClick={() => {
-                    setSelectedZoneId(null);
-                }}>
-                    <div className="tower-selection-container" onClick={e => e.stopPropagation()}>
-                        {hand.map((cardDefId, idx) => {
-                            const def = CARD_DEFINITIONS.find(c => c.id === cardDefId);
-                            if (!def) return null;
-                            return (
-                                <div
-                                    key={`${cardDefId}-${idx}`}
-                                    className={`game-card game-card--${def.rarity}`}
-                                    onClick={() => {
-                                        if (selectedZoneId) {
-                                            const state = gameStateRef.current;
-                                            if (state) {
-                                                gameStateRef.current = placeCard(state, cardDefId, selectedZoneId);
-                                                setHand([...gameStateRef.current.hand]);
-                                                setGameSnapshot({ ...gameStateRef.current });
-                                                setSelectedZoneId(null);
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <div className="game-card__header">
-                                        <span className="game-card__name">{def.name}</span>
-                                        <span className="game-card__cost">{def.energyCost}</span>
-                                    </div>
-                                    <div className="game-card__art">
-                                        <div className="game-card__art-placeholder" style={{ padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-                                            <CardTowerPreview card={def} size={50} />
-                                        </div>
-                                    </div>
-                                    <div className="game-card__stats">
-                                        <div className="game-card__stat-row">
-                                            <span className="stat-label">DMG</span>
-                                            <span className="stat-val">{def.primeEffect.baseDamage}</span>
-                                        </div>
-                                        <div className="game-card__stat-row">
-                                            <span className="stat-label">RNG</span>
-                                            <span className="stat-val">{def.primeEffect.range}</span>
-                                        </div>
-                                        <div className="game-card__stat-row">
-                                            <span className="stat-label">SPD</span>
-                                            <span className="stat-val">{def.primeEffect.fireRate}</span>
-                                        </div>
-                                    </div>
-                                    <div className="game-card__info-btn" onClick={(e) => { e.stopPropagation(); setInspectedCard(def); }}>
-                                        ℹ
-                                    </div>
-                                    <div className="game-card__desc">
-                                        {def.flavorText}
+            {/* Enemy Info Panel OR Current Enemies List OR Tower Info */}
+            {gameSnapshot && (
+                selectedEnemyId ? (() => {
+                    const enemy = gameSnapshot.enemies.find(e => e.id === selectedEnemyId);
+                    if (enemy && enemy.alive) {
+                        return <EnemyInfo enemy={enemy} onClose={() => setSelectedEnemyId(null)} />;
+                    }
+                    return null;
+                })() : selectedZoneId ? (() => {
+                    // Check for tower in this zone
+                    const tower = gameSnapshot.towers.find(t => t.zoneId === selectedZoneId);
+                    if (tower) {
+                        return <TowerInfo tower={tower} onClose={() => setSelectedZoneId(null)} />;
+                    }
+                    return (
+                        <CurrentEnemiesPanel
+                            enemies={gameSnapshot.enemies}
+                            onSelectEnemy={handleEnemyClick}
+                        />
+                    );
+                })() : (
+                    <CurrentEnemiesPanel
+                        enemies={gameSnapshot.enemies}
+                        onSelectEnemy={handleEnemyClick}
+                    />
+                )
+            )}
+
+            {/* Persistent Hand UI */}
+            {gameActive && (uiPhase === 'PLACEMENT_PHASE' || uiPhase === 'COMBAT_PHASE') && (
+                <div className="hand-container">
+                    {hand.map((cardDefId, idx) => {
+                        const def = CARD_DEFINITIONS.find(c => c.id === cardDefId);
+                        if (!def) return null;
+                        const isSelected = selectedHandIndex === idx;
+                        const canAfford = (gameSnapshot?.energy || 0) >= def.energyCost;
+
+                        return (
+                            <div
+                                key={`${cardDefId}-${idx}`}
+                                className={`hand-card hand-card--${def.rarity} ${isSelected ? 'hand-card--selected' : ''} ${!canAfford ? 'hand-card--disabled' : ''}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (isSelected) setSelectedHandIndex(null);
+                                    else setSelectedHandIndex(idx);
+                                }}
+                            >
+                                <div className="hand-card__cost">{def.energyCost}</div>
+                                <div className="hand-card__preview">
+                                    <div style={{ transform: 'scale(0.6)' }}>
+                                        <CardTowerPreview card={def} size={40} />
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <div className="hand-card__name">{def.name}</div>
+                                <div className="hand-card__info-icon" onClick={(e) => { e.stopPropagation(); setInspectedCard(def); }}>
+                                    ℹ
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 
             {/* Wave Control (Floating Button) */}
             {uiPhase === 'PLACEMENT_PHASE' && !selectedZoneId && (
-                <div style={{ position: 'fixed', bottom: 70, right: 20, zIndex: 200 }}>
+                <div style={{ position: 'fixed', bottom: 70, right: 20, zIndex: 300 }}>
                     <button className="retro-btn retro-btn--danger" onClick={handleStartWave} style={{ padding: '12px 24px', fontSize: '16px' }}>
                         <RetroIcon name="run" size={18} style={{ marginRight: 8 }} /> SEND WAVE
                     </button>
@@ -340,16 +431,10 @@ export default function GameScreen() {
             {gameResult && (
                 <div className="game-result-overlay">
                     <div className="game-result retro-panel retro-panel--elevated">
-                        <h2 className="font-retro" style={{ fontSize: 14, color: gameResult.won ? 'var(--retro-green)' : 'var(--retro-red)' }}>
-                            {gameResult.won ? (
-                                <span className="flex-center gap-sm">
-                                    <RetroIcon name="trophy" size={24} /> VICTORY!
-                                </span>
-                            ) : (
-                                <span className="flex-center gap-sm">
-                                    <RetroIcon name="skull" size={24} /> DEFEATED
-                                </span>
-                            )}
+                        <h2 className="font-retro" style={{ fontSize: 14, color: 'var(--retro-red)' }}>
+                            <span className="flex-center gap-sm">
+                                <RetroIcon name="skull" size={24} /> GAME OVER
+                            </span>
                         </h2>
                         <p style={{ margin: 'var(--space-md) 0', color: 'var(--text-secondary)' }}>
                             Waves: {gameResult.waves} · Score: {gameResult.score}

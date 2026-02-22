@@ -1,35 +1,20 @@
-/* ---- Card Detail Modal ---- */
+/* ---- Card Detail Split Modal ---- */
 
 .cdm-overlay {
     z-index: 2000;
-    /* above game overlays */
 }
 
-.cdm-card {
-    background: var(--bg-surface);
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
-    max-width: 360px;
+.cdm-container {
+    max-width: 800px;
     width: 92%;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow:
-        0 0 30px rgba(0, 0, 0, 0.6),
-        0 0 60px rgba(0, 229, 255, 0.08);
-    animation: cdm-enter 0.25s ease-out;
+    max-height: 90vh;
+    animation: cdm-enter 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     position: relative;
-}
-
-.cdm-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, currentColor, transparent);
-    opacity: 0.5;
+    gap: var(--space-md);
 }
 
 @keyframes cdm-enter {
@@ -44,59 +29,118 @@
     }
 }
 
-/* Header */
-.cdm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-md);
-}
-
-.cdm-header__left {
+/* Left Side: Scaled up CCG Card */
+.cdm-card-display {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-    flex: 1;
-    min-width: 0;
+    align-items: center;
+    justify-content: center;
 }
 
-.cdm-name {
-    font-size: 12px;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    line-height: 1.3;
-    word-break: break-word;
+.cdm-card-wrapper {
+    position: relative;
 }
 
-.cdm-cost {
+/* We simply scale the Card component so it's massive */
+.cdm-card-wrapper .card-poster {
+    transform: scale(calc(100vw / 400));
+    /* Responsive scaling */
+    transform-origin: center center;
+    pointer-events: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 229, 255, 0.2);
+}
+
+@media (min-width: 768px) {
+    .cdm-card-wrapper .card-poster {
+        transform: scale(2.2);
+    }
+}
+
+@media (max-width: 600px) {
+    .cdm-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cdm-card-wrapper .card-poster {
+        transform: scale(1.6);
+    }
+}
+
+/* Controls */
+.cdm-controls {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: calc(var(--space-xl) * 3);
+    /* Push down past the scaled card */
+    position: relative;
+    z-index: 10;
+}
+
+.cdm-stats-toggle,
+.cdm-close-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--retro-yellow);
-    border-radius: var(--radius-sm);
-    padding: 4px 10px;
-    font-family: var(--font-retro);
+    gap: 6px;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-full);
     font-size: 14px;
-    color: var(--retro-yellow);
-    box-shadow: 0 0 8px rgba(255, 230, 0, 0.15);
-    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--border-color);
 }
 
-/* Damage Type Banner */
-.cdm-type-banner {
+.cdm-stats-toggle:hover,
+.cdm-close-btn:hover {
+    background: var(--bg-surface);
+    border-color: var(--retro-cyan);
+}
+
+.cdm-stats-toggle--active {
+    background: var(--retro-cyan);
+    color: #000;
+    border-color: #fff;
+}
+
+.cdm-stats-toggle--active:hover {
+    background: #00b8cc;
+    color: #000;
+}
+
+/* Right Side: Details & Action */
+.cdm-details {
+    background: rgba(10, 15, 25, 0.95);
+    border: 2px solid var(--retro-cyan);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+    width: 300px;
+    max-height: 80vh;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: cdm-slide-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cdm-details--open {
     display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) var(--space-sm);
-    border: 1px solid;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-retro);
-    font-size: 9px;
-    letter-spacing: 2px;
-    margin-bottom: var(--space-md);
-    background: rgba(0, 0, 0, 0.25);
+}
+
+@keyframes cdm-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.cdm-details-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-md);
 }
 
 /* Effects */
@@ -104,11 +148,10 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    margin-bottom: var(--space-md);
 }
 
 .cdm-effect {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     padding: var(--space-sm);
@@ -161,19 +204,32 @@
     margin: 2px -4px;
 }
 
-/* Flavor */
+/* Flavor / Rules Text */
 .cdm-flavor {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    padding: var(--space-sm) 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    margin-bottom: var(--space-md);
-    line-height: 1.4;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-sm);
+    padding: var(--space-md);
+    border-left: 2px solid var(--retro-yellow);
+}
+
+.cdm-flavor-label {
+    font-family: var(--font-retro);
+    font-size: 8px;
+    color: var(--retro-yellow);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.cdm-flavor-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
 }
 
 /* Close */
 .cdm-close {
     width: 100%;
+    margin-top: auto;
 }

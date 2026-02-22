@@ -94,6 +94,7 @@ export interface AppSettings {
     maxDecks: number;
     unlockedMapIds: string[];
     upgrades: Record<string, number>; // upgradeId -> level
+    personalBests: Record<string, number>; // mapId -> maxWaveReached
 }
 
 // ---- Database ----
@@ -170,6 +171,7 @@ export async function initializeDB() {
             maxDecks: 3,
             unlockedMapIds: ['map-serpent'], // Start with only Serpent Pass
             upgrades: {},
+            personalBests: {},
         });
     } else {
         // Existing User: Runtime checks for missing fields that might not be covered by schema migrations
@@ -201,6 +203,7 @@ export async function initializeDB() {
         }
 
         ensureField('upgrades', {});
+        ensureField('personalBests', {});
 
         if (Object.keys(updates).length > 0) {
             await db.settings.update('settings', updates);

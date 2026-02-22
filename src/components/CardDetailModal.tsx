@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { CardDefinition, TowerEffect, SpecialEffect, DamageType } from '../data/cardDefinitions';
 import RetroIcon, { type IconName } from './RetroIcon';
-import CardTowerPreview from './CardTowerPreview';
+import Card from './Card';
 import './CardDetailModal.css';
 
 // ---- Human-readable helpers ----
@@ -31,13 +32,7 @@ const DMG_TYPE_COLORS: Record<DamageType, string> = {
     thermal: 'var(--retro-red)',
     electric: 'var(--retro-cyan)',
     corrosive: 'var(--retro-green)',
-};
-
-const DMG_TYPE_ICONS: Record<DamageType, IconName> = {
-    kinetic: 'cross',
-    thermal: 'sun',
-    electric: 'bolt',
-    corrosive: 'skull',
+    void: '#9900ff',
 };
 
 function EffectBlock({ label, effect }: { label: string; effect: TowerEffect }) {
@@ -95,49 +90,57 @@ interface CardDetailModalProps {
 }
 
 export default function CardDetailModal({ card, onClose }: CardDetailModalProps) {
+    const [showStats, setShowStats] = useState(false);
+
     if (!card) return null;
 
-    const rarityColor = `var(--rarity-${card.rarity})`;
-    const typeColor = DMG_TYPE_COLORS[card.primeEffect.damageType];
-    const typeIcon = DMG_TYPE_ICONS[card.primeEffect.damageType];
+    const isAction = card.type === 'action';
+    const isAugment = card.type === 'augment';
+    const hasStats = !isAction; // Actions don't have tower stats
 
     return (
         <div className="modal-overlay cdm-overlay" onClick={onClose}>
-            <div className="cdm-card" onClick={e => e.stopPropagation()} style={{ borderColor: rarityColor }}>
-                {/* Header */}
-                <div className="cdm-header">
-                    <div className="cdm-header__left">
-                        <span className={`rarity-badge rarity-badge--${card.rarity}`}>{card.rarity}</span>
-                        <h2 className="cdm-name font-retro">{card.name}</h2>
+            <div className={`cdm-container ${showStats ? 'cdm-container--show-stats' : ''}`} onClick={e => e.stopPropagation()}>
+
+                {/* Left Side: The Actual Card Component */}
+                <div className="cdm-card-display">
+                    {/* The primary card view, scaled to fill the container */}
+                    <div className="cdm-card-wrapper">
+                        <Card card={card} />
                     </div>
-                    <div className="cdm-cost">
-                        <RetroIcon name="bolt" size={14} color="var(--retro-yellow)" />
-                        <span>{card.energyCost}</span>
+
+                    {/* Stats Toggle Button */}
+                    <div className="cdm-controls">
+                        {hasStats && (
+                            <button
+                                className={`retro-btn cdm-stats-toggle ${showStats ? 'cdm-stats-toggle--active' : ''}`}
+                                onClick={() => setShowStats(!showStats)}
+                            >
+                                <RetroIcon name="attack" size={14} />
+                                {showStats ? 'Hide Stats' : 'Show Stats'}
+                            </button>
+                        )}
+                        <button className="retro-btn cdm-close-btn" onClick={onClose}>
+                            Close
+                        </button>
                     </div>
                 </div>
 
-                {/* Visual Preview Banner */}
-                <div className="cdm-type-banner" style={{ borderColor: typeColor, color: typeColor, flexDirection: 'column', height: 'auto', padding: '16px 0' }}>
-                    <div style={{ marginBottom: 8, transform: 'scale(1.5)' }}>
-                        <CardTowerPreview card={card} size={64} />
+                {/* Right Side: Collapsible Stats Panel */}
+                {hasStats && (
+                    <div className={`cdm-details ${showStats ? 'cdm-details--open' : ''}`}>
+                        <div className="cdm-details-scroll">
+                            <div className="cdm-effects">
+                                {card.primeEffect.baseDamage > 0 && (
+                                    <EffectBlock label={isAugment ? "Augment Base Stats" : "Unit Stats"} effect={card.primeEffect} />
+                                )}
+                                {card.supportEffect.baseDamage > 0 && (
+                                    <EffectBlock label="Support Bonus / Aura" effect={card.supportEffect} />
+                                )}
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <RetroIcon name={typeIcon} size={16} color={typeColor} />
-                        <span>{card.primeEffect.damageType.toUpperCase()}</span>
-                    </div>
-                </div>
-
-                {/* Effects */}
-                <div className="cdm-effects">
-                    <EffectBlock label="Tower Stats" effect={card.primeEffect} />
-                    <EffectBlock label="Support Bonus" effect={card.supportEffect} />
-                </div>
-
-                {/* Flavor Text */}
-                <div className="cdm-flavor">"{card.flavorText}"</div>
-
-                {/* Close */}
-                <button className="retro-btn cdm-close" onClick={onClose}>Close</button>
+                )}
             </div>
         </div>
     );

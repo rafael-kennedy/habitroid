@@ -191,28 +191,7 @@
     filter: url(#neonYellow);
 }
 
-@keyframes wobble {
 
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    25% {
-        transform: rotate(6deg);
-    }
-
-    75% {
-        transform: rotate(-6deg);
-    }
-}
-
-.enemy-wobble {
-    animation: wobble 0.3s ease-in-out infinite;
-    transform-origin: center;
-}
-
-/* --- Projectile --- */
 .projectile {
     fill: #5ac8fa;
     filter: url(#neonBlue);
@@ -223,15 +202,16 @@
 }
 
 /* --- HUD --- */
+/* --- HUD --- */
 .game-hud {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
     height: 50px;
     background: rgba(5, 5, 10, 0.88);
-    border-top: 2px solid #00ffff;
-    box-shadow: 0 -4px 16px rgba(0, 255, 255, 0.15);
+    border-bottom: 2px solid #00ffff;
+    box-shadow: 0 4px 16px rgba(0, 255, 255, 0.15);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -289,4 +269,23 @@
 .game-hud__score-label {
     color: rgba(232, 232, 240, 0.4);
     font-size: 14px;
+}
+
+.game-hud__energy-gauge {
+    width: 30px;
+    height: 6px;
+    background: rgba(255, 234, 0, 0.2);
+    border: 1px solid rgba(255, 234, 0, 0.4);
+    border-radius: 3px;
+    margin-left: 6px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+
+.game-hud__energy-fill {
+    height: 100%;
+    background: #ffea00;
+    box-shadow: 0 0 4px #ffea00;
+    transition: width 0.2s ease-out;
 }

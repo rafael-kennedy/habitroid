@@ -1,0 +1,125 @@
+.tower-info-panel {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    /* Mirrored from EnemyInfo */
+    width: 200px;
+    background: rgba(10, 20, 20, 0.95);
+    border: 1px solid var(--retro-cyan);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 4px;
+    z-index: 100;
+    pointer-events: auto;
+    font-family: 'Share Tech Mono', monospace;
+    animation: slideInLeft 0.2s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tower-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.tower-info-title {
+    color: var(--retro-cyan);
+    font-size: 12px;
+    text-shadow: 0 0 4px rgba(0, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+.tower-info-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.tower-info-close:hover {
+    color: #fff;
+}
+
+.tower-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tower-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.tower-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tower-info-stats {
+    background: rgba(0, 255, 255, 0.05);
+    padding: 4px 6px;
+    border-radius: 2px;
+}
+
+.tower-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+    font-size: 11px;
+}
+
+.tower-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.tower-info-row .label {
+    color: var(--text-muted);
+}
+
+.tower-info-row .value {
+    color: #fff;
+}
+
+.section-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.support-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.support-item {
+    font-size: 10px;
+    padding: 2px 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 2px solid #fff;
+    color: #eee;
+}

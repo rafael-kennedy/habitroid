@@ -7,7 +7,7 @@ import { UPGRADE_DEFINITIONS, getUpgradeCost } from '../data/upgrades';
 import CoinDisplay from '../components/CoinDisplay';
 import RetroIcon from '../components/RetroIcon';
 import CardDetailModal from '../components/CardDetailModal';
-import CardTowerPreview from '../components/CardTowerPreview';
+import Card from '../components/Card';
 import { motion, AnimatePresence } from 'framer-motion';
 import './ShopScreen.css';
 
@@ -111,7 +111,7 @@ export default function ShopScreen() {
                     >
                         {UPGRADE_DEFINITIONS.map(u => {
                             const currentLevel = useEconomyStore.getState().settings?.upgrades?.[u.id] || 0;
-                            const isMaxed = currentLevel >= u.maxLevel;
+
                             const cost = getUpgradeCost(u, currentLevel);
 
                             return (
@@ -125,12 +125,12 @@ export default function ShopScreen() {
                                     <p className="pack-desc" style={{ fontSize: 11, minHeight: 40 }}>{u.description}</p>
 
                                     <div style={{ margin: '8px 0', fontSize: 12, color: 'var(--text-secondary)' }}>
-                                        Level: <span style={{ color: 'var(--retro-yellow)' }}>{currentLevel} / {u.maxLevel}</span>
+                                        Level: <span style={{ color: 'var(--retro-yellow)' }}>{currentLevel}</span>
                                     </div>
 
                                     <div className="pack-meta">
                                         <span>Current: {u.effectDescription(currentLevel)}</span>
-                                        {!isMaxed && <span style={{ color: 'var(--retro-green)' }}>Next: {u.effectDescription(currentLevel + 1)}</span>}
+                                        <span style={{ color: 'var(--retro-green)' }}>Next: {u.effectDescription(currentLevel + 1)}</span>
                                     </div>
 
                                     <motion.button
@@ -141,13 +141,9 @@ export default function ShopScreen() {
                                                 await purchaseUpgrade(u.id, cost);
                                             }
                                         }}
-                                        disabled={isMaxed || coinBalance < cost}
+                                        disabled={coinBalance < cost}
                                     >
-                                        {isMaxed ? 'MAXED' : (
-                                            <>
-                                                <RetroIcon name="coin" size={14} style={{ marginRight: 4 }} /> {cost}
-                                            </>
-                                        )}
+                                        <RetroIcon name="coin" size={14} style={{ marginRight: 4 }} /> {cost.toLocaleString()}
                                     </motion.button>
                                 </motion.div>
                             );
@@ -212,25 +208,12 @@ export default function ShopScreen() {
                                     <motion.div
                                         variants={itemVariants}
                                         key={def.id}
-                                        className={`card-mini retro-panel ${count === 0 ? 'card-mini--locked' : ''}`}
                                         onClick={() => setInspectedCard(def)}
                                         layoutId={`card-${def.id}`}
-                                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 'var(--space-sm)' }}
+                                        style={{ cursor: 'pointer', opacity: count === 0 ? 0.3 : 1, filter: count === 0 ? 'grayscale(1)' : 'none' }}
                                         whileHover={{ scale: 1.05, zIndex: 10 }}
                                     >
-                                        <div className={`card-mini__rarity rarity-badge rarity-badge--${def.rarity}`} style={{ alignSelf: 'flex-start' }}>
-                                            {def.rarity[0].toUpperCase()}
-                                        </div>
-
-                                        <div style={{ margin: '8px 0', transform: 'scale(1.2)' }}>
-                                            <CardTowerPreview card={def} size={40} />
-                                        </div>
-
-                                        <div className="card-mini__name" style={{ fontSize: 10, marginTop: 4 }}>{def.name}</div>
-                                        <div className="card-mini__cost">
-                                            <RetroIcon name="bolt" size={10} color="var(--retro-yellow)" />{def.energyCost}
-                                        </div>
-                                        {count > 0 && <div className="card-mini__count">×{count}</div>}
+                                        <Card card={def} count={count} />
                                     </motion.div>
                                 );
                             })}
@@ -257,26 +240,13 @@ export default function ShopScreen() {
                                 {revealedCards.map((card, i) => (
                                     <motion.div
                                         key={i}
-                                        className={`reveal-card reveal-card--${card.rarity}`}
                                         initial={{ opacity: 0, scale: 0.5, y: 50 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         transition={{ delay: i * 0.2, type: 'spring' }}
-                                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                                        style={{ cursor: 'pointer' }}
                                         onClick={() => setInspectedCard(card)}
                                     >
-                                        <div className={`rarity-badge rarity-badge--${card.rarity}`}>
-                                            {card.rarity}
-                                        </div>
-
-                                        <div style={{ margin: '16px 0', transform: 'scale(1.5)' }}>
-                                            <CardTowerPreview card={card} size={64} />
-                                        </div>
-
-                                        <div className="reveal-card__name font-retro">{card.name}</div>
-                                        <div className="reveal-card__cost">
-                                            <RetroIcon name="bolt" size={12} color="var(--retro-yellow)" />{card.energyCost}
-                                        </div>
-                                        <div className="reveal-card__flavor">{card.flavorText}</div>
+                                        <Card card={card} />
                                     </motion.div>
                                 ))}
                             </div>

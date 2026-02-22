@@ -29,13 +29,13 @@ export const MAP_DEFINITIONS: MapDefinition[] = [
             },
         ],
         placementZones: [
-            { id: 'z1', center: { x: 100, y: 250 }, radius: 40 },
-            { id: 'z2', center: { x: 350, y: 280 }, radius: 40 },
-            { id: 'z3', center: { x: 300, y: 420 }, radius: 40 },
-            { id: 'z4', center: { x: 500, y: 420 }, radius: 40 },
-            { id: 'z5', center: { x: 100, y: 580 }, radius: 40 },
-            { id: 'z6', center: { x: 350, y: 600 }, radius: 40 },
-            { id: 'z7', center: { x: 500, y: 150 }, radius: 40 },
+            { id: 'z1', center: { x: 100, y: 250 }, radius: 24 },
+            { id: 'z2', center: { x: 350, y: 280 }, radius: 24 },
+            { id: 'z3', center: { x: 300, y: 420 }, radius: 24 },
+            { id: 'z4', center: { x: 500, y: 420 }, radius: 24 },
+            { id: 'z5', center: { x: 100, y: 580 }, radius: 24 },
+            { id: 'z6', center: { x: 350, y: 600 }, radius: 24 },
+            { id: 'z7', center: { x: 500, y: 150 }, radius: 24 },
         ],
         waves: [
             { enemies: [{ type: 'basic', count: 5, delay: 1.0 }] },
@@ -81,12 +81,12 @@ export const MAP_DEFINITIONS: MapDefinition[] = [
             },
         ],
         placementZones: [
-            { id: 'z1', center: { x: 100, y: 420 }, radius: 40 },
-            { id: 'z2', center: { x: 200, y: 250 }, radius: 40 },
-            { id: 'z3', center: { x: 450, y: 350 }, radius: 40 },
-            { id: 'z4', center: { x: 200, y: 550 }, radius: 40 },
-            { id: 'z5', center: { x: 400, y: 550 }, radius: 40 },
-            { id: 'z6', center: { x: 500, y: 150 }, radius: 40 },
+            { id: 'z1', center: { x: 100, y: 420 }, radius: 24 },
+            { id: 'z2', center: { x: 200, y: 250 }, radius: 24 },
+            { id: 'z3', center: { x: 450, y: 350 }, radius: 24 },
+            { id: 'z4', center: { x: 200, y: 550 }, radius: 24 },
+            { id: 'z5', center: { x: 400, y: 550 }, radius: 24 },
+            { id: 'z6', center: { x: 500, y: 150 }, radius: 24 },
         ],
         waves: [
             { enemies: [{ type: 'basic', count: 6, delay: 0.9 }] },
@@ -125,14 +125,14 @@ export const MAP_DEFINITIONS: MapDefinition[] = [
             },
         ],
         placementZones: [
-            { id: 'z1', center: { x: 450, y: 200 }, radius: 40 },
-            { id: 'z2', center: { x: 200, y: 280 }, radius: 40 },
-            { id: 'z3', center: { x: 300, y: 430 }, radius: 40 },
-            { id: 'z4', center: { x: 100, y: 430 }, radius: 35 },
-            { id: 'z5', center: { x: 500, y: 430 }, radius: 35 },
-            { id: 'z6', center: { x: 300, y: 580 }, radius: 40 },
-            { id: 'z7', center: { x: 450, y: 650 }, radius: 35 },
-            { id: 'z8', center: { x: 150, y: 150 }, radius: 35 },
+            { id: 'z1', center: { x: 450, y: 200 }, radius: 24 },
+            { id: 'z2', center: { x: 200, y: 280 }, radius: 24 },
+            { id: 'z3', center: { x: 300, y: 430 }, radius: 24 },
+            { id: 'z4', center: { x: 100, y: 430 }, radius: 24 },
+            { id: 'z5', center: { x: 500, y: 430 }, radius: 24 },
+            { id: 'z6', center: { x: 300, y: 580 }, radius: 24 },
+            { id: 'z7', center: { x: 450, y: 650 }, radius: 24 },
+            { id: 'z8', center: { x: 150, y: 150 }, radius: 24 },
         ],
         waves: [
             { enemies: [{ type: 'basic', count: 8, delay: 0.7 }] },
@@ -177,14 +177,14 @@ export const MAP_DEFINITIONS: MapDefinition[] = [
             }
         ],
         placementZones: [
-            { id: 'z1', center: { x: 180, y: 150 }, radius: 35 },
-            { id: 'z2', center: { x: 420, y: 150 }, radius: 35 },
-            { id: 'z3', center: { x: 300, y: 250 }, radius: 40 }, // Dangerous center spot
-            { id: 'z4', center: { x: 180, y: 400 }, radius: 35 },
-            { id: 'z5', center: { x: 420, y: 400 }, radius: 35 },
-            { id: 'z6', center: { x: 300, y: 550 }, radius: 40 },
-            { id: 'z7', center: { x: 200, y: 700 }, radius: 35 },
-            { id: 'z8', center: { x: 400, y: 700 }, radius: 35 },
+            { id: 'z1', center: { x: 180, y: 150 }, radius: 24 },
+            { id: 'z2', center: { x: 420, y: 150 }, radius: 24 },
+            { id: 'z3', center: { x: 300, y: 250 }, radius: 24 }, // Dangerous center spot
+            { id: 'z4', center: { x: 180, y: 400 }, radius: 24 },
+            { id: 'z5', center: { x: 420, y: 400 }, radius: 24 },
+            { id: 'z6', center: { x: 300, y: 550 }, radius: 24 },
+            { id: 'z7', center: { x: 200, y: 700 }, radius: 24 },
+            { id: 'z8', center: { x: 400, y: 700 }, radius: 24 },
         ],
         waves: [
             { enemies: [{ type: 'fast', count: 10, delay: 0.5 }] },
@@ -217,16 +217,16 @@ export const MAP_DEFINITIONS: MapDefinition[] = [
         ],
         placementZones: [
             // Center is the kill box
-            { id: 'z1', center: { x: 300, y: 300 }, radius: 30 },
-            { id: 'z2', center: { x: 300, y: 500 }, radius: 30 },
-            { id: 'z3', center: { x: 500, y: 400 }, radius: 30 },
-            { id: 'z4', center: { x: 100, y: 400 }, radius: 30 },
-            { id: 'z5', center: { x: 300, y: 100 }, radius: 40 },
-            { id: 'z6', center: { x: 300, y: 700 }, radius: 40 },
-            { id: 'z7', center: { x: 500, y: 100 }, radius: 30 }, // Corners
-            { id: 'z8', center: { x: 100, y: 100 }, radius: 30 },
-            { id: 'z9', center: { x: 500, y: 700 }, radius: 30 },
-            { id: 'z10', center: { x: 100, y: 700 }, radius: 30 },
+            { id: 'z1', center: { x: 300, y: 300 }, radius: 24 },
+            { id: 'z2', center: { x: 300, y: 500 }, radius: 24 },
+            { id: 'z3', center: { x: 500, y: 400 }, radius: 24 },
+            { id: 'z4', center: { x: 100, y: 400 }, radius: 24 },
+            { id: 'z5', center: { x: 300, y: 100 }, radius: 24 },
+            { id: 'z6', center: { x: 300, y: 700 }, radius: 24 },
+            { id: 'z7', center: { x: 500, y: 100 }, radius: 24 }, // Corners
+            { id: 'z8', center: { x: 100, y: 100 }, radius: 24 },
+            { id: 'z9', center: { x: 500, y: 700 }, radius: 24 },
+            { id: 'z10', center: { x: 100, y: 700 }, radius: 24 },
         ],
         waves: [
             { enemies: [{ type: 'armored', count: 5, delay: 1.5 }] }, // Tanky start

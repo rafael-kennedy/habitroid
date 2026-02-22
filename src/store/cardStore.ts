@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db, type CardInstance, type Deck } from '../services/db';
-import { CARD_DEFINITIONS, type CardDefinition, type Rarity } from '../data/cardDefinitions';
+import { CARD_DEFINITIONS, CARD_DEFINITION_MAP, type CardDefinition, type Rarity } from '../data/cardDefinitions';
 import { BOOSTER_PACKS, type BoosterPack } from '../data/boosterPacks';
 
 interface CardState {
@@ -72,7 +72,7 @@ export const useCardStore = create<CardState>((set, get) => ({
     },
 
     getCardDefinition: (definitionId) => {
-        return CARD_DEFINITIONS.find(c => c.id === definitionId);
+        return CARD_DEFINITION_MAP[definitionId];
     },
 
     createDeck: async (name) => {

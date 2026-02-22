@@ -7,6 +7,7 @@ import FoodScreen from './screens/FoodScreen';
 import ShopScreen from './screens/ShopScreen';
 import DeckScreen from './screens/DeckScreen';
 import GameScreen from './screens/GameScreen';
+import StatsScreen from './screens/StatsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import WalkthroughOverlay from './components/WalkthroughOverlay';
 import { initializeDB } from './services/db';
@@ -34,6 +35,7 @@ function AppContent() {
         <Route path="/shop" element={<ShopScreen />} />
         <Route path="/decks" element={<DeckScreen />} />
         <Route path="/game" element={<GameScreen />} />
+        <Route path="/stats" element={<StatsScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
       </Routes>
       <NavBar />

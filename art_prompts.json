@@ -1,0 +1,362 @@
+[
+  {
+    "id": "c09",
+    "name": "Target Override: Strongest",
+    "type": "action",
+    "prompt": "A crosshair locking onto a massive dreadnought."
+  },
+  {
+    "id": "c10",
+    "name": "Target Override: Weakest",
+    "type": "action",
+    "prompt": "A crosshair locking onto a damaged scout ship."
+  },
+  {
+    "id": "c11",
+    "name": "Target Override: Closest",
+    "type": "action",
+    "prompt": "A radar sweep highlighting a deeply infiltrated blip."
+  },
+  {
+    "id": "c12",
+    "name": "Vent the Core!",
+    "type": "action",
+    "prompt": "The ship venting green plasma into space."
+  },
+  {
+    "id": "c13",
+    "name": "Red Alert",
+    "type": "action",
+    "prompt": "Flashing red siren lights."
+  },
+  {
+    "id": "c20",
+    "name": "Comm Communicator",
+    "type": "action",
+    "prompt": "A flip-phone style communicator calling a ship."
+  },
+  {
+    "id": "l06",
+    "name": "Orbital Beam Strike",
+    "type": "action",
+    "prompt": "A pillar of fire destroying ground targets from above."
+  },
+  {
+    "id": "l10",
+    "name": "Monologue Delay",
+    "type": "action",
+    "prompt": "A slow-moving laser inching toward a strapped-down ship."
+  },
+  {
+    "id": "r10",
+    "name": "Over-Volting",
+    "type": "action",
+    "prompt": "A turret sparking and glowing white-hot."
+  },
+  {
+    "id": "r11",
+    "name": "EMP Blast",
+    "type": "action",
+    "prompt": "A wave of blue static short-circuiting a mech."
+  },
+  {
+    "id": "r12",
+    "name": "Jury-Rig",
+    "type": "action",
+    "prompt": "Wrenching a shiny part out of a flaming wreck."
+  },
+  {
+    "id": "r19",
+    "name": "Mind Meld",
+    "type": "action",
+    "prompt": "Glowing fingers pressing against a robot's synthetic temple."
+  },
+  {
+    "id": "r20",
+    "name": "Trap Door",
+    "type": "action",
+    "prompt": "An enemy falling down a pit hidden in a sterile white floor."
+  },
+  {
+    "id": "u09",
+    "name": "Scrap Magnet",
+    "type": "action",
+    "prompt": "A giant magnet pulling floating debris."
+  },
+  {
+    "id": "u10",
+    "name": "Caffeinate",
+    "type": "action",
+    "prompt": "A futuristic, highly-pressurized espresso shot."
+  },
+  {
+    "id": "u11",
+    "name": "Warning Shot",
+    "type": "action",
+    "prompt": "A laser beam blazing across the bow of an enemy ship."
+  },
+  {
+    "id": "u12",
+    "name": "Temporal Reset",
+    "type": "action",
+    "prompt": "A clock face shattering in mid-air."
+  },
+  {
+    "id": "u19",
+    "name": "Smoke Screen",
+    "type": "action",
+    "prompt": "A thick cloud of colorful, vintage special-effects smoke."
+  },
+  {
+    "id": "u20",
+    "name": "Shaken, Not Stirred",
+    "type": "action",
+    "prompt": "A martini glass swirling with cosmic energy."
+  },
+  {
+    "id": "c05",
+    "name": "Duct-Tape Modifications",
+    "type": "augment",
+    "prompt": "Literally duct tape on a laser barrel."
+  },
+  {
+    "id": "c06",
+    "name": "Jumper Cables",
+    "type": "augment",
+    "prompt": "Oversized car battery cables."
+  },
+  {
+    "id": "c07",
+    "name": "Recycled Kinetic Rounds",
+    "type": "augment",
+    "prompt": "Bullets made from scrap metal."
+  },
+  {
+    "id": "c08",
+    "name": "Heavy Plating",
+    "type": "augment",
+    "prompt": "Thick, riveted armor plates."
+  },
+  {
+    "id": "c17",
+    "name": "Lava Lamp Cartridge",
+    "type": "augment",
+    "prompt": "A glowing, bubbling lava lamp attached to a generator."
+  },
+  {
+    "id": "c18",
+    "name": "Tricorder Scan",
+    "type": "augment",
+    "prompt": "A hand-held device emitting a scanning grid."
+  },
+  {
+    "id": "l05",
+    "name": "Sentient Singularity Core",
+    "type": "augment",
+    "prompt": "A floating eye made of a black hole."
+  },
+  {
+    "id": "l09",
+    "name": "The Doomsday Switch",
+    "type": "augment",
+    "prompt": "A giant red button under a glass case on a control stick."
+  },
+  {
+    "id": "r06",
+    "name": "Symbiotic Brain-Slug",
+    "type": "augment",
+    "prompt": "A glowing green slug attached to a helmet."
+  },
+  {
+    "id": "r07",
+    "name": "Void-Matter Injector",
+    "type": "augment",
+    "prompt": "A hovering droplet of total darkness."
+  },
+  {
+    "id": "r08",
+    "name": "Assimilation Matrix",
+    "type": "augment",
+    "prompt": "A swirling swarm of nanites."
+  },
+  {
+    "id": "r09",
+    "name": "Gravity Well Generator",
+    "type": "augment",
+    "prompt": "A spinning top that distorts light around it."
+  },
+  {
+    "id": "r17",
+    "name": "Gold-Plated Blaster",
+    "type": "augment",
+    "prompt": "A ridiculously gaudy, solid-gold blaster."
+  },
+  {
+    "id": "r18",
+    "name": "Transporter Buffer",
+    "type": "augment",
+    "prompt": "A glowing transport pad wired into an ammo clip."
+  },
+  {
+    "id": "u06",
+    "name": "Unstable Plasma Cell",
+    "type": "augment",
+    "prompt": "A cracked, leaking battery."
+  },
+  {
+    "id": "u07",
+    "name": "Cryo-Grenade Launcher",
+    "type": "augment",
+    "prompt": "A frosted barrel spraying mist."
+  },
+  {
+    "id": "u08",
+    "name": "Ricochet Prism",
+    "type": "augment",
+    "prompt": "A polarizing crystal splitting a laser beam."
+  },
+  {
+    "id": "u17",
+    "name": "Energy Suppressor",
+    "type": "augment",
+    "prompt": "A comically long silencer screwed onto a blaster."
+  },
+  {
+    "id": "u18",
+    "name": "Phaser Converter",
+    "type": "augment",
+    "prompt": "A retro, blocky pistol grip attached to a turret."
+  },
+  {
+    "id": "l02",
+    "name": "The Bio-Sphere & The Overmind",
+    "type": "leader",
+    "prompt": "A literal floating terrarium encased in sci-fi glass."
+  },
+  {
+    "id": "l07",
+    "name": "The Chromed Cruiser & Agent X",
+    "type": "leader",
+    "prompt": "A silver 1960s UFO-style sports car modified for spaceflight."
+  },
+  {
+    "id": "r13",
+    "name": "The Spire of Observation",
+    "type": "leader",
+    "prompt": "A sleek, silver tower with a rotating radar dish."
+  },
+  {
+    "id": "c01",
+    "name": "B.O.B. (Bumbling Ordnance Bot)",
+    "type": "unit",
+    "prompt": "A trash-can-shaped robot dropping a missile."
+  },
+  {
+    "id": "c02",
+    "name": "Gloop, The Acidic Janitor",
+    "type": "unit",
+    "prompt": "A gelatinous blob wielding a space-mop."
+  },
+  {
+    "id": "c03",
+    "name": "S-7 Sentinel Drone",
+    "type": "unit",
+    "prompt": "A sleek, floating orb with a red eye."
+  },
+  {
+    "id": "c04",
+    "name": "Ensign Ricky",
+    "type": "unit",
+    "prompt": "A nervous human in a red uniform holding a tiny blaster."
+  },
+  {
+    "id": "c14",
+    "name": "Security Patrol (Yellow Shirt)",
+    "type": "unit",
+    "prompt": "A retro crewman holding a blocky phaser."
+  },
+  {
+    "id": "c15",
+    "name": "Expendable Crewman (Red Shirt)",
+    "type": "unit",
+    "prompt": "A terrified crewman in a red tunic."
+  },
+  {
+    "id": "c16",
+    "name": "Silver-Plated Android",
+    "type": "unit",
+    "prompt": "A stiff, shiny 60s female robot."
+  },
+  {
+    "id": "l03",
+    "name": "Omicron, The Final Arbiter",
+    "type": "unit",
+    "prompt": "A titanic, planet-cracking mecha."
+  },
+  {
+    "id": "l08",
+    "name": "The Psychedelic Goliath",
+    "type": "unit",
+    "prompt": "A massive war-mech with a spinning disco-ball array."
+  },
+  {
+    "id": "r02",
+    "name": "Gorgon The Unflinching",
+    "type": "unit",
+    "prompt": "A massive rock-alien swinging a grav-hammer."
+  },
+  {
+    "id": "r05",
+    "name": "Junk-Bot Harvester",
+    "type": "unit",
+    "prompt": "A spider-bot sifting through metallic debris."
+  },
+  {
+    "id": "r14",
+    "name": "Mad Scientist Bob",
+    "type": "unit",
+    "prompt": "A bald villain stroking a space-cat."
+  },
+  {
+    "id": "r15",
+    "name": "Retro-Tech Quartermaster",
+    "type": "unit",
+    "prompt": "An exasperated scientist demonstrating a laser pen."
+  },
+  {
+    "id": "u02",
+    "name": "Lt. Vex, The Sharpshooter",
+    "type": "unit",
+    "prompt": "A cybernetic sniper perched in a nest."
+  },
+  {
+    "id": "u03",
+    "name": "Xylar, the Plasma-Blower",
+    "type": "unit",
+    "prompt": "A four-armed alien holding a massive, glowing tuba-cannon."
+  },
+  {
+    "id": "u04",
+    "name": "Dave the Trapper",
+    "type": "unit",
+    "prompt": "A guy completely engulfed in a ridiculously oversized mech-suit."
+  },
+  {
+    "id": "u13",
+    "name": "The Disc-Thrower",
+    "type": "unit",
+    "prompt": "A silver-suited agent throwing a metallic frisbee."
+  },
+  {
+    "id": "u14",
+    "name": "Gorn-Like Bruiser",
+    "type": "unit",
+    "prompt": "A rubber-suited lizard alien swinging a rock."
+  },
+  {
+    "id": "u15",
+    "name": "The Science Officer",
+    "type": "unit",
+    "prompt": "A pointy-eared alien inspecting a hand-held scanner."
+  }
+]

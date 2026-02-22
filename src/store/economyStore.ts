@@ -19,6 +19,7 @@ interface EconomyState {
     purchaseDeckSlot: () => Promise<boolean>;
     unlockMap: (mapId: string, cost: number) => Promise<boolean>;
     purchaseUpgrade: (upgradeId: string, cost: number) => Promise<boolean>;
+    updatePersonalBest: (mapId: string, wave: number) => Promise<void>;
 }
 
 export const useEconomyStore = create<EconomyState>((set, get) => ({
@@ -139,6 +140,17 @@ export const useEconomyStore = create<EconomyState>((set, get) => ({
         return false;
     },
 
+    updatePersonalBest: async (mapId, wave) => {
+        const settings = get().settings;
+        if (!settings) return;
+
+        const currentBest = settings.personalBests?.[mapId] || 0;
+        if (wave > currentBest) {
+            const newBests = { ...(settings.personalBests || {}), [mapId]: wave };
+            await get().updateSettings({ personalBests: newBests });
+        }
+    },
+
     spinDailyGrid: async (level) => {
         // RNG Logic based on level (streak)
         // Level 1-2: Low rewards
@@ -152,10 +164,24 @@ export const useEconomyStore = create<EconomyState>((set, get) => ({
         if (roll < 0.4) rewardType = 'card';
 
         if (rewardType === 'coin') {
-            let amount = 0;
-            if (level < 3) amount = 25 + Math.floor(Math.random() * 25); // 25-50
-            else if (level < 7) amount = 50 + Math.floor(Math.random() * 100); // 50-150
-            else amount = 150 + Math.floor(Math.random() * 350); // 150-500
+            let amount = 25;
+
+            if (level < 3) {
+                // Low level: mostly 25, some 50
+                amount = Math.random() < 0.8 ? 25 : 50;
+            } else if (level < 7) {
+                // Mid level: 50, 100, rare 200
+                const r = Math.random();
+                if (r < 0.6) amount = 50;
+                else if (r < 0.9) amount = 100;
+                else amount = 200;
+            } else {
+                // High level: 100, 200, rare 500
+                const r = Math.random();
+                if (r < 0.5) amount = 100;
+                else if (r < 0.9) amount = 200;
+                else amount = 500;
+            }
 
             await get().earnCoins(amount, 'shop', `Daily Spin (Streak ${level})`);
 

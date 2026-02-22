@@ -62,6 +62,8 @@ export interface Enemy {
     effects: ActiveEffect[];
     value: number;        // score on kill
     totalPathLength: number;
+    wanderPhase: number;
+    wanderAmplitude: number;
 }
 
 export interface ActiveEffect {
@@ -95,6 +97,10 @@ export interface Tower {
     cooldown: number;
     targetId: string | null;
     angle: number;
+    // Card-specific runtime state
+    killCount: number;
+    disabled: boolean;
+    tags: string[];  // e.g. ['robot', 'alien', 'organic', 'yellow_shirt']
 }
 
 export interface Projectile {
@@ -136,7 +142,11 @@ export interface GameState {
     enemiesSpawned: number;
     spawnTimer: number;
     waveEnemies: { type: EnemyType; delay: number }[];
+    waveEnergyYield: number;
     waveComplete: boolean;
+    // Card behavior state
+    unitCostDiscount: number;     // temporary cost reduction for next unit (u10)
+    firstActionThisWave: boolean; // whether first action has been played this wave (l07)
 }
 
 export const ENEMY_STATS: Record<EnemyType, { hp: number; speed: number; armor: number; value: number }> = {

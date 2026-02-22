@@ -3,6 +3,7 @@ import type { GameState } from '../../game/types';
 import { MAP_DEFINITIONS } from '../../game/map';
 import PathLayer from './PathLayer';
 import ZoneLayer from './ZoneLayer';
+import BaseSprite from './BaseSprite';
 import TowerSprite from './TowerSprite';
 import EnemySprite from './EnemySprite';
 import ProjectileSprite from './ProjectileSprite';
@@ -13,10 +14,12 @@ interface Props {
     state: GameState;
     selectedZoneId: string | null;
     onZoneClick: (zoneId: string) => void;
+    onTowerClick: (towerId: string, zoneId: string) => void;
+    onEnemyClick: (enemyId: string) => void;
     onBackgroundClick: () => void;
 }
 
-function SvgPlayfield({ state, selectedZoneId, onZoneClick, onBackgroundClick }: Props) {
+function SvgPlayfield({ state, selectedZoneId, onZoneClick, onTowerClick, onEnemyClick, onBackgroundClick }: Props) {
     const map = MAP_DEFINITIONS.find(m => m.id === state.mapId);
     if (!map) return null;
 
@@ -133,12 +136,18 @@ function SvgPlayfield({ state, selectedZoneId, onZoneClick, onBackgroundClick }:
                     onZoneClick={onZoneClick}
                 />
 
+                <BaseSprite state={state} />
+
                 {/* Dynamic layers */}
                 {state.towers.map(tower => (
-                    <TowerSprite key={tower.id} tower={tower} />
+                    <TowerSprite
+                        key={tower.id}
+                        tower={tower}
+                        onClick={() => onTowerClick(tower.id, tower.zoneId)}
+                    />
                 ))}
                 {state.enemies.map(enemy => (
-                    <EnemySprite key={enemy.id} enemy={enemy} />
+                    <EnemySprite key={enemy.id} enemy={enemy} onClick={onEnemyClick} />
                 ))}
                 {state.projectiles.map(proj => (
                     <ProjectileSprite key={proj.id} proj={proj} />

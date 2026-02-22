@@ -9,6 +9,7 @@ interface TodoState {
     addTodo: (text: string, coinReward: number) => Promise<void>;
     toggleTodo: (id: string, coinReward: number) => Promise<void>;
     deleteTodo: (id: string) => Promise<void>;
+    updateTodo: (id: string, updates: Partial<Todo>) => Promise<void>;
 }
 
 export const useTodoStore = create<TodoState>((set) => ({
@@ -65,5 +66,12 @@ export const useTodoStore = create<TodoState>((set) => ({
     deleteTodo: async (id) => {
         await db.todos.delete(id);
         set(state => ({ todos: state.todos.filter(t => t.id !== id) }));
+    },
+
+    updateTodo: async (id, updates) => {
+        await db.todos.update(id, updates);
+        set(state => ({
+            todos: state.todos.map(t => t.id === id ? { ...t, ...updates } : t)
+        }));
     },
 }));

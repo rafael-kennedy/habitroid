@@ -4,6 +4,7 @@ import { CARD_DEFINITIONS, type TowerVisuals } from '../../data/cardDefinitions'
 
 interface Props {
     tower: Tower;
+    onClick?: () => void;
 }
 
 // Helper to generate Star/Spiky/Bouba paths
@@ -81,7 +82,7 @@ function getBarrelPath(visuals: TowerVisuals): React.JSX.Element | null {
     }
 }
 
-function TowerSprite({ tower }: Props) {
+function TowerSprite({ tower, onClick }: Props) {
     if (!CARD_DEFINITIONS || CARD_DEFINITIONS.length === 0) {
         console.error("CARD_DEFINITIONS missing!");
         return <circle r={10} fill="red" />;
@@ -89,20 +90,54 @@ function TowerSprite({ tower }: Props) {
 
     const cardDef = useMemo(() => CARD_DEFINITIONS.find(c => c.id === tower.primeCardDefId), [tower.primeCardDefId]);
 
-    // Default fallback visuals if missing (shouldn't happen with updated data)
-    const visuals = cardDef?.visuals ?? {
-        baseShape: 'hex', basePoints: 6, baseScale: 1, baseStrokeWidth: 2, baseRotation: 0,
-        barrelShape: 'rect', barrelCount: 1, barrelLength: 12,
-        coreColor: '#ccc', accentColor: '#fff', glowColor: '#0ff'
-    } as TowerVisuals;
+    // Handle Augments (Support Cards) by mutating base visuals
+    const visuals = useMemo(() => {
+        let baseVis = cardDef?.visuals ? { ...cardDef.visuals } : {
+            baseShape: 'hex', basePoints: 6, baseScale: 1, baseStrokeWidth: 2, baseRotation: 0,
+            barrelShape: 'rect', barrelCount: 1, barrelLength: 12,
+            coreColor: '#ccc', accentColor: '#fff', glowColor: '#0ff'
+        } as TowerVisuals;
+
+        // Apply visual mutations from Augments
+        for (const supportId of tower.supportCardDefIds) {
+            const supportDef = CARD_DEFINITIONS.find(c => c.id === supportId);
+            if (supportDef && supportDef.visuals) {
+                // Example mutations: 
+                // Color override based on support card's damage type glow 
+                if (supportDef.supportEffect.damageType !== cardDef?.primeEffect.damageType) {
+                    baseVis.glowColor = supportDef.visuals.glowColor;
+                }
+                // Increase barrels if multishot added
+                if (supportDef.supportEffect.multishot > 0) {
+                    baseVis.barrelCount = (baseVis.barrelCount || 1) + supportDef.supportEffect.multishot;
+                }
+                // Thicken if base damage added heavily
+                if (supportDef.supportEffect.baseDamage > 10) {
+                    baseVis.baseScale = (baseVis.baseScale || 1) * 1.1;
+                }
+            }
+        }
+        return baseVis;
+    }, [cardDef, tower.supportCardDefIds]);
 
     // Pulse brightness based on cooldown
     const recharge = 1 - (tower.cooldown / (1 / (tower.fireRate || 1)));
     const alpha = 0.2 + 0.3 * Math.max(0, recharge);
+    const recoil = Math.max(0, recharge) * 3; // 3px kickback
 
     if (cardDef?.visualPath) {
         return (
-            <g className="tower-group" transform={`translate(${tower.x}, ${tower.y})`}>
+            <g
+                className="tower-group"
+                transform={`translate(${tower.x}, ${tower.y})`}
+                onClick={(e) => {
+                    if (onClick) {
+                        e.stopPropagation();
+                        onClick();
+                    }
+                }}
+                style={{ cursor: 'pointer' }}
+            >
                 <circle className="tower-range" cx={0} cy={0} r={tower.range} />
 
                 {/* Static SVG asset, rotated to face target */}
@@ -112,7 +147,7 @@ function TowerSprite({ tower }: Props) {
                 {/* In procedural: barrel points up (negative Y) and we rotate by angle + 90 deg. */}
                 {/* Let's replicate that rotation. */}
 
-                <g transform={`rotate(${(tower.angle * 180) / Math.PI + 90})`}>
+                <g transform={`rotate(${(tower.angle * 180) / Math.PI + 90}) translate(0, ${recoil})`}>
                     <image
                         href={cardDef.visualPath}
                         x={-20} y={-20}
@@ -132,7 +167,17 @@ function TowerSprite({ tower }: Props) {
     if (!baseD) return <circle r={10} fill="magenta" />;
 
     return (
-        <g className="tower-group" transform={`translate(${tower.x}, ${tower.y})`}>
+        <g
+            className="tower-group"
+            transform={`translate(${tower.x}, ${tower.y})`}
+            onClick={(e) => {
+                if (onClick) {
+                    e.stopPropagation();
+                    onClick();
+                }
+            }}
+            style={{ cursor: 'pointer' }}
+        >
             {/* Range indicator (visible on hover via CSS) */}
             <circle className="tower-range" cx={0} cy={0} r={tower.range} />
 
@@ -162,8 +207,12 @@ function TowerSprite({ tower }: Props) {
             </g>
 
             {/* Rotating barrel */}
-            <g transform={`rotate(${(tower.angle * 180) / Math.PI + 90})`}>
+            <g transform={`rotate(${(tower.angle * 180) / Math.PI + 90}) translate(0, ${recoil})`}>
                 {getBarrelPath(visuals)}
+                {/* Muzzle Flash */}
+                {recharge > 0.8 && (
+                    <circle cx={0} cy={-(visuals.barrelLength || 12) - 2} r={3 + recharge * 3} fill="#fff" opacity={recharge} />
+                )}
             </g>
         </g>
     );

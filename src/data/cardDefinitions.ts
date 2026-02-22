@@ -1,9 +1,11 @@
 // ---- Card Definition Types & 70-Card Catalog ----
 import type { TargetStrategy } from '../game/types';
 
-export type DamageType = 'kinetic' | 'thermal' | 'electric' | 'corrosive';
+export type CardType = 'leader' | 'unit' | 'augment' | 'action';
+
+export type DamageType = 'kinetic' | 'thermal' | 'electric' | 'corrosive' | 'void';
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary';
-export type SpecialEffect = 'none' | 'slow' | 'aoe' | 'chain' | 'dot' | 'pierce' | 'stun' | 'snare' | 'bounce' | 'percent' | 'vulnerable' | 'generate_energy' | 'draw_card' | 'leech' | 'amplify';
+export type SpecialEffect = 'none' | 'slow' | 'aoe' | 'chain' | 'dot' | 'pierce' | 'stun' | 'snare' | 'bounce' | 'percent' | 'vulnerable' | 'generate_energy' | 'draw_card' | 'leech' | 'amplify' | 'buff_firerate' | 'global_knockback' | 'refresh_cooldowns' | 'random_dmg' | 'pierce_armor' | 'confuse' | 'aura_slow' | 'aoe_slow';
 
 export interface TowerEffect {
     damageType: DamageType;
@@ -40,6 +42,7 @@ export interface TowerVisuals {
 
 export interface CardDefinition {
     id: string;
+    type: CardType;
     name: string;
     rarity: Rarity;
     energyCost: number;
@@ -91,7 +94,8 @@ function generateVisuals(id: string, type: DamageType, rarity: Rarity): TowerVis
         kinetic: '#ffffff', // White/Cyan
         thermal: '#ff3b30', // Red/Orange
         electric: '#bf5af2', // Purple
-        corrosive: '#39ff14' // Neon Green
+        corrosive: '#39ff14', // Neon Green
+        void: '#9900ff' // Deep Purple/Void
     };
 
     const glowColor = typeColors[type];
@@ -119,5 +123,10 @@ function generateVisuals(id: string, type: DamageType, rarity: Rarity): TowerVis
 
 export { generateVisuals };
 
-import { ALL_TOWERS } from './towers/index';
-export const CARD_DEFINITIONS: CardDefinition[] = ALL_TOWERS;
+import { CARD_DEFINITIONS as ALL_CARDS } from './cards/index';
+export const CARD_DEFINITIONS: CardDefinition[] = ALL_CARDS;
+
+export const CARD_DEFINITION_MAP: Record<string, CardDefinition> = ALL_CARDS.reduce((acc, card) => {
+    acc[card.id] = card;
+    return acc;
+}, {} as Record<string, CardDefinition>);

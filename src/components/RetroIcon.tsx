@@ -15,6 +15,12 @@ import {
     Heart,
     Trophy,
     Skull,
+    BarChart2,
+    Swords,
+    Timer,
+    Crosshair,
+    Globe,
+    Atom,
 
     // Actions
     Check,
@@ -107,6 +113,12 @@ export type IconName =
     | 'heart'
     | 'trophy'
     | 'skull'
+    | 'stats'
+    | 'attack'
+    | 'speed'
+    | 'range'
+    | 'globe'
+    | 'atom'
 
     // Actions
     | 'check'
@@ -204,6 +216,12 @@ const ICON_MAP: Record<IconName, React.ElementType> = {
     heart: Heart,
     trophy: Trophy,
     skull: Skull,
+    stats: BarChart2,
+    attack: Swords,
+    speed: Timer,
+    range: Crosshair,
+    globe: Globe,
+    atom: Atom,
 
     // Actions
     check: Check,

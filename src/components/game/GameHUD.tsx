@@ -24,7 +24,13 @@ function GameHUD({ state }: Props) {
                 </span>
                 <span className="game-hud__stat game-hud__stat--energy">
                     <RetroIcon name="bolt" size={14} color="#ffea00" />
-                    {state.energy}
+                    {Math.floor(state.energy)}
+                    <div className="game-hud__energy-gauge">
+                        <div
+                            className="game-hud__energy-fill"
+                            style={{ width: `${(state.energy % 1) * 100}%` }}
+                        />
+                    </div>
                 </span>
                 <span className="game-hud__stat game-hud__stat--score">
                     {state.score}

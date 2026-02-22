@@ -148,22 +148,34 @@
     gap: 4px;
 }
 
-.habit-delete {
+.habit-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.habit-action-btn {
     background: none;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: var(--space-xs);
+    padding: 6px;
     opacity: 0.4;
     transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 4px;
 }
 
-.habit-delete:hover {
-    color: var(--retro-red);
+.habit-action-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
     opacity: 1;
+    color: var(--retro-cyan);
+}
+
+.habit-action-btn--delete:hover {
+    color: var(--retro-red);
+    background: rgba(255, 0, 0, 0.1);
 }
 
 .coin-pop {

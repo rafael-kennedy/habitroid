@@ -1,7 +1,7 @@
 .deck-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
 }
 
 .deck-card {
@@ -15,10 +15,11 @@
 
 .deck-card:hover {
     border-color: var(--retro-cyan);
+    transform: translateY(-2px);
 }
 
 .deck-card__name {
-    font-size: 11px;
+    font-size: 14px;
     color: var(--retro-cyan);
     margin-bottom: 4px;
 }
@@ -28,67 +29,131 @@
     color: var(--text-muted);
 }
 
+/* Editor Layout */
+.deck-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .deck-editor__header {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.deck-cards {
+.deck-editor__content {
+    display: flex;
+    gap: var(--space-lg);
+    height: calc(100vh - 200px);
+    /* rough estimate */
+}
+
+/* Left Column: Deck View */
+.deck-column {
+    width: 300px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-}
-
-.deck-card-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
-}
-
-.deck-card-item__info {
-    flex: 1;
-}
-
-.deck-card-item__name {
-    font-size: 13px;
-    display: block;
-}
-
-.deck-card-item__stats {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.picker-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    max-height: 50vh;
+    border-right: 1px solid var(--border-color);
+    padding-right: var(--space-md);
     overflow-y: auto;
 }
 
-.picker-card {
+.deck-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.deck-card-row {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid transparent;
+    /* Placeholder for hover border */
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+}
+
+.deck-card-row:hover {
+    background: var(--bg-elevated);
+    border-color: var(--retro-border);
+}
+
+.deck-card-row__name {
+    flex: 1;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Right Column: Collection Picker */
+.collection-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.collection-toolbar {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-retro);
+    font-size: 12px;
+}
+
+.filter-select {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-retro);
+    font-size: 11px;
     cursor: pointer;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-md);
+    overflow-y: auto;
+    padding-bottom: var(--space-xl);
+    align-content: start;
+}
+
+.deck-remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 4px;
     transition: all var(--transition-fast);
 }
 
-.picker-card:hover {
-    border-color: var(--retro-green);
-}
-
-.picker-card__name {
-    flex: 1;
-    font-size: 12px;
-}
-
-.picker-card__cost {
-    font-size: 12px;
-    color: var(--retro-yellow);
+.deck-remove-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--retro-red);
 }

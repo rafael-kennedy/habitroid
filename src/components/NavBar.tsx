@@ -9,6 +9,7 @@ const NAV_ITEMS: { path: string; icon: IconName; label: string }[] = [
     { path: '/shop', icon: 'crate', label: 'Shop' },
     { path: '/decks', icon: 'cards', label: 'Decks' },
     { path: '/game', icon: 'gamepad', label: 'Game' },
+    { path: '/stats', icon: 'stats', label: 'Stats' },
 ];
 
 export default function NavBar() {

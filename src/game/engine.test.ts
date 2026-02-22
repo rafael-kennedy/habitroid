@@ -26,7 +26,9 @@ function createEnemy(id: string, hp = 100, x = 0, y = 0): Enemy {
         alive: true,
         effects: [],
         value: 10,
-        totalPathLength: 1000 // Arbitrary default
+        totalPathLength: 1000, // Arbitrary default
+        wanderPhase: 0,
+        wanderAmplitude: 0
     };
 }
 
@@ -59,7 +61,7 @@ describe('Game Engine Mechanics', () => {
 
     describe('Game State Initialization', () => {
         it('should initialize with correct map defaults', () => {
-            const _nextState = createGameState('map-serpent', ['c01']);
+            const _nextState = createGameState('map-serpent', ['c01', 'c02']);
             expect(_nextState.phase).toBe('DRAW_PHASE');
             expect(_nextState.hp).toBe(20); // map-serpent default
             expect(_nextState.energy).toBe(5); // map-serpent default

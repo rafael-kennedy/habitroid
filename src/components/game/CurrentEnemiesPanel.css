@@ -1,0 +1,97 @@
+.current-enemies-panel {
+    position: absolute;
+    top: 60px;
+    /* Below HUD (50px) + gap */
+    right: 10px;
+    width: 140px;
+    /* Compact */
+    background: rgba(10, 10, 20, 0.8);
+    border: 1px solid rgba(57, 255, 20, 0.3);
+    border-radius: 4px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 90;
+    /* Below EnemyInfo (100) if they overlap, but EnemyInfo replaces this usually? No, coexist? */
+    /* If EnemyInfo is open, maybe this should hide? Or sit beside? */
+    /* Let's let them overlap for now, user can close EnemyInfo. */
+    pointer-events: auto;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.cep-header {
+    font-size: 10px;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+    text-align: right;
+}
+
+.cep-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cep-row:hover {
+    background: rgba(57, 255, 20, 0.15);
+}
+
+.cep-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cep-name {
+    font-size: 10px;
+    color: #e8e8f0;
+}
+
+.cep-count {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--retro-red);
+}
+
+/* Mini Icons matching EnemySprite colors/shapes rougly */
+.cep-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cep-icon--basic {
+    background: #ff2d95;
+}
+
+.cep-icon--fast {
+    background: #ffea00;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    border-radius: 0;
+}
+
+.cep-icon--armored {
+    background: #ff6b35;
+    border-radius: 2px;
+}
+
+.cep-icon--swarm {
+    background: #bf5af2;
+}
+
+.cep-icon--boss {
+    background: #ff3b30;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+}
